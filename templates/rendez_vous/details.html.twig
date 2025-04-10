@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Appointment Details{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .rv-detail-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    .rv-detail-item {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .rv-detail-label {
+        color: #6c757d;
+        font-weight: 500;
+        min-width: 160px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="rv-detail-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h4 mb-0"><i class="fas fa-calendar-check me-2"></i>Appointment Details</h1>
+        <a href="{{ path('rendezvous_list') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back
+        </a>
+    </div>
+
+    <div class="rv-detail-item d-flex">
+        <span class="rv-detail-label">Date:</span>
+        <span class="fw-medium">{{ rendezvous.date|date('l, d F Y') }}</span>
+    </div>
+
+    <div class="rv-detail-item d-flex">
+        <span class="rv-detail-label">Consultation Type:</span>
+        <span class="rv-badge">{{ rendezvous.typeConsultationId }}</span>
+    </div>
+
+    <div class="rv-detail-item d-flex">
+        <span class="rv-detail-label">Time Slot:</span>
+        <span class="fw-medium">
+            {{ rendezvous.startTime|date('H:i') }} - {{ rendezvous.endTime|date('H:i') }}
+        </span>
+    </div>
+
+    <div class="rv-detail-item d-flex">
+        <span class="rv-detail-label">Duration:</span>
+        <span class="fw-medium">
+            {{ rendezvous.endTime.diff(rendezvous.startTime)|date('%h h %i min') }}
+        </span>
+    </div>
+</div>
+{% endblock %}
