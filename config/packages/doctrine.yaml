@@ -1,5 +1,11 @@
 doctrine:
     dbal:
+        types:
+            enum: App\Doctrine\DBAL\Types\EnumType
+        mapping_types:
+            enum: string  # Treat ENUM as string
+        server_version: 'mariadb-10.4.3' # Match your exact version
+        
         url: '%env(resolve:DATABASE_URL)%'
 
         # IMPORTANT: You MUST configure your server version,
