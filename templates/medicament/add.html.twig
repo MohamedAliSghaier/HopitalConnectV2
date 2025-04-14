@@ -1,0 +1,92 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Ajouter un Médicament{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .rv-form-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .rv-form-header {
+        border-left: 4px solid #4a90e2;
+        padding-left: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-input {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.75rem 1.25rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    }
+
+    .form-error {
+        color: #e74c3c;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-form-card">
+        <h2 class="h4 rv-form-header">
+            <i class="fas fa-plus me-2"></i>Ajouter un Médicament
+        </h2>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        {% if form.vars.errors|length > 0 %}
+            <div class="form-error mb-4">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+        
+        <div class="mb-4">
+            {{ form_label(form.nom) }}
+            {{ form_widget(form.nom, {'attr': {'class': 'form-input'}}) }}
+            {% if form.nom.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.nom) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            {{ form_label(form.stock) }}
+            {{ form_widget(form.stock, {'attr': {'class': 'form-input'}}) }}
+            {% if form.stock.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.stock) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="fas fa-save me-2"></i>Enregistrer
+            </button>
+            <a href="{{ path('medicament_list') }}" class="btn btn-outline-secondary px-4">
+                <i class="fas fa-times me-2"></i>Annuler
+            </a>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

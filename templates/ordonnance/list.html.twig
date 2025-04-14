@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Ordonnances{% endblock %}
+
+{% block body %}
+<div class="rv-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0"><i class="fas fa-file-prescription me-2"></i>Liste des Ordonnances</h1>
+        <div class="d-flex gap-2">
+            <a href="{{ path('ordonnance_add') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i>Ajouter une Ordonnance
+            </a>
+        </div>
+    </div>
+
+    <table class="rv-table table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Médecin</th>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ordonnance in ordonnance_list %}
+            <tr>
+                <td>{{ ordonnance.medecin_id.nom }}</td>
+                <td>{{ ordonnance.patient_id.nom }}</td>
+                <td>{{ ordonnance.date_prescription|date('d/m/Y H:i') }}</td>
+                <td>{{ ordonnance.statut }}</td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <a href="{{ path('ordonnance_details', {'id': ordonnance.id}) }}" 
+                           class="btn btn-sm btn-outline-primary">
+                           <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ path('ordonnance_update', {'id': ordonnance.id}) }}" 
+                           class="btn btn-sm btn-outline-warning">
+                           <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ path('ordonnance_delete', {'id': ordonnance.id}) }}" 
+                           class="btn btn-sm btn-outline-danger" 
+                           onclick="return confirm('Supprimer cette ordonnance ?')">
+                           <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">Aucune ordonnance trouvée</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

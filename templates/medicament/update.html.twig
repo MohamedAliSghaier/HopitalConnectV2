@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un Médicament{% endblock %}
+
+{% block body %}
+    <h1>Modifier un Médicament</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn">Modifier</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('medicament_list') }}">Retour à la liste</a>
+{% endblock %}

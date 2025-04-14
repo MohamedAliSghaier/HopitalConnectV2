@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Médicament{% endblock %}
+
+{% block body %}
+    <h1>Détails du Médicament</h1>
+
+    <p><strong>Nom :</strong> {{ medicament.nom }}</p>
+    <p><strong>Stock :</strong> {{ medicament.stock }}</p>
+    {% if medicament.pharmacien is not null %}
+    Pharmacien ID: {{ medicament.pharmacien.id }}
+{% else %}
+    Pharmacien: Not assigned
+{% endif %}
+
+    <a href="{{ path('medicament_list') }}">Retour à la liste</a>
+{% endblock %}

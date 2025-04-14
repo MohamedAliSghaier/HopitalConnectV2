@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche de Médicaments{% endblock %}
+
+{% block body %}
+    <h1>Recherche de Médicaments</h1>
+
+    <form method="POST">
+        <input type="text" name="search_term" placeholder="Nom du médicament" />
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <ul>
+        {% for medicament in medicament_list %}
+            <li>{{ medicament.nom }} — Stock : {{ medicament.stock }}</li>
+        {% else %}
+            <li>Aucun résultat.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('medicament_list') }}">Retour à la liste</a>
+{% endblock %}

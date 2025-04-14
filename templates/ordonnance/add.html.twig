@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'add' in app.request.attributes.get('_route') ? 'Nouvelle' : 'Modifier' }} Ordonnance{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .rv-form-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .rv-form-header {
+        border-left: 4px solid #4a90e2;
+        padding-left: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-input {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.75rem 1.25rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    }
+
+    .form-error {
+        color: #e74c3c;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="rv-form-card">
+    <h2 class="h4 rv-form-header">
+        <i class="fas fa-{{ 'add' in app.request.attributes.get('_route') ? 'plus' : 'edit' }} me-2"></i>
+        {{ 'add' in app.request.attributes.get('_route') ? 'Nouvelle' : 'Modifier' }} Ordonnance
+    </h2>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {% if form.vars.errors|length > 0 %}
+        <div class="form-error mb-4">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+    
+    <div class="mb-4">
+        {{ form_label(form.medecin_id) }}
+        {{ form_widget(form.medecin_id, {'attr': {'class': 'form-input'}}) }}
+        {% if form.medecin_id.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.medecin_id) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.patient_id) }}
+        {{ form_widget(form.patient_id, {'attr': {'class': 'form-input'}}) }}
+        {% if form.patient_id.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.patient_id) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.medicaments) }}
+        {{ form_widget(form.medicaments, {'attr': {'class': 'form-input'}}) }}
+        {% if form.medicaments.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.medicaments) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.date_prescription) }}
+        {{ form_widget(form.date_prescription, {'attr': {'class': 'form-input'}}) }}
+        {% if form.date_prescription.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.date_prescription) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.instructions) }}
+        {{ form_widget(form.instructions, {'attr': {'class': 'form-input'}}) }}
+        {% if form.instructions.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.instructions) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.statut) }}
+        {{ form_widget(form.statut, {'attr': {'class': 'form-input'}}) }}
+        {% if form.statut.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.statut) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="d-flex justify-content-end gap-3 mt-4">
+        <button type="submit" class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i>Enregistrer
+        </button>
+        <a href="{{ path('ordonnance_list') }}" class="btn btn-outline-secondary px-4">
+            <i class="fas fa-times me-2"></i>Annuler
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

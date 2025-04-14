@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Search Analyses{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <h2 class="mb-0">Search Analyses</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="search_term" 
+                           class="form-control" 
+                           placeholder="Search by date, type, or RendezVous ID...">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </form>
+
+            {% if analyses is not empty %}
+                {% include 'analyse/list.html.twig' with {'analyses': analyses} %}
+            {% else %}
+                <div class="alert alert-warning">No results found</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
