@@ -49,8 +49,7 @@
             <tr>
                 <th>Date</th>
                 <th>Type</th>
-                <th>Time</th>
-                <th>Duration</th>
+                <th>Start Time</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -58,9 +57,18 @@
             {% for rendezvous in rendezvous_list %}
             <tr>
                 <td>{{ rendezvous.date|date('d M Y') }}</td>
-                <td><span class="rv-badge">{{ rendezvous.typeConsultationId }}</span></td>
-                <td>{{ rendezvous.startTime|date('H:i') }} - {{ rendezvous.endTime|date('H:i') }}</td>
-                <td>{{ rendezvous.endTime.diff(rendezvous.startTime)|date('%h h %i min') }}</td>
+                <td>
+                    <span class="rv-badge">
+                        {% if rendezvous.typeConsultationId == 1 %}
+                            Consultation
+                        {% elseif rendezvous.typeConsultationId == 2 %}
+                            Téléconsultation
+                        {% else %}
+                            Inconnu
+                        {% endif %}
+                    </span>
+                </td>
+                <td>{{ rendezvous.startTime|date('H:i') }}</td>
                 <td>
                     <div class="d-flex gap-2">
                         <a href="{{ path('rendezvous_details', {'id': rendezvous.id}) }}" 
@@ -81,7 +89,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="5" class="text-center text-muted py-4">No appointments found</td>
+                <td colspan="4" class="text-center text-muted py-4">No appointments found</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -23,9 +23,8 @@ class RendezvousType extends AbstractType
             ->add('start_time', null, [
                 'widget' => 'single_text',
             ])
-            ->add('end_time', null, [
-                'widget' => 'single_text',
-            ])
+            
+            
             // ->add('PatientId', EntityType::class, [
             //     'class' => Patient::class,
             //     'choice_label' => 'id',

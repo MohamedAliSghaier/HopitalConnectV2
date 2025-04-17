@@ -22,7 +22,7 @@
 
     .rv-time-inputs {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: 1.5rem;
         margin-bottom: 1.5rem;
     }
@@ -67,10 +67,6 @@
             {{ form_label(form.start_time) }}
             {{ form_widget(form.start_time, {'attr': {'class': 'flatpickr-time'}}) }}
         </div>
-        <div>
-            {{ form_label(form.end_time) }}
-            {{ form_widget(form.end_time, {'attr': {'class': 'flatpickr-time'}}) }}
-        </div>
     </div>
 
     <div class="d-flex justify-content-end gap-3 mt-4">
@@ -86,13 +82,11 @@
 </div>
 
 <script>
-    // Date picker
     flatpickr('.flatpickr-date', {
         dateFormat: "Y-m-d",
-        locale: "en" // Set your locale
+        locale: "en"
     });
 
-    // Time pickers
     flatpickr('.flatpickr-time', {
         enableTime: true,
         noCalendar: true,

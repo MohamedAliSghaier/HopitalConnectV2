@@ -26,7 +26,12 @@ class Analyse
 
         #[ORM\ManyToOne(targetEntity: Rendezvous::class, inversedBy: "analyses")]
     #[ORM\JoinColumn(name: 'id_rendezvous', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Rendezvous $RendezVous;
+    private ?Rendezvous $RendezVous = null;
+
+    #[ORM\ManyToOne(targetEntity: Rendezvous::class, inversedBy: "analyses")]
+#[ORM\JoinColumn(name: 'id_rendezvous', referencedColumnName: 'id', onDelete: 'CASCADE')]
+private ?Rendezvous $id_rendezvous = null;
+
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;

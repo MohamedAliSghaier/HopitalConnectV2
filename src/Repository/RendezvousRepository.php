@@ -40,4 +40,18 @@ class RendezvousRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    // src/Repository/RendezvousRepository.php
+
+// src/Repository/RendezvousRepository.php
+
+public function findByPatientId(int $patientId): array
+{
+    return $this->createQueryBuilder('r')
+        ->andWhere('r.PatientId = :patientId')
+        ->setParameter('patientId', $patientId)
+        ->orderBy('r.date', 'ASC')
+        ->addOrderBy('r.start_time', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
 }

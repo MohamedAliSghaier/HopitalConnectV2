@@ -22,6 +22,14 @@
         font-weight: 500;
         min-width: 160px;
     }
+
+    .rv-badge {
+        background: rgba(74, 144, 226, 0.1);
+        color: #4a90e2;
+        border-radius: 8px;
+        padding: 0.4rem 0.75rem;
+        font-weight: 500;
+    }
 </style>
 {% endblock %}
 
@@ -41,21 +49,24 @@
 
     <div class="rv-detail-item d-flex">
         <span class="rv-detail-label">Consultation Type:</span>
-        <span class="rv-badge">{{ rendezvous.typeConsultationId }}</span>
+        <span class="rv-badge">
+            {% if rendezvous.typeConsultationId == 1 %}
+                Consultation
+            {% elseif rendezvous.typeConsultationId == 2 %}
+                Teleconsultation
+            {% else %}
+                Unknown
+            {% endif %}
+        </span>
     </div>
 
     <div class="rv-detail-item d-flex">
         <span class="rv-detail-label">Time Slot:</span>
         <span class="fw-medium">
-            {{ rendezvous.startTime|date('H:i') }} - {{ rendezvous.endTime|date('H:i') }}
+            {{ rendezvous.startTime|date('H:i') }} 
         </span>
     </div>
 
-    <div class="rv-detail-item d-flex">
-        <span class="rv-detail-label">Duration:</span>
-        <span class="fw-medium">
-            {{ rendezvous.endTime.diff(rendezvous.startTime)|date('%h h %i min') }}
-        </span>
-    </div>
+    
 </div>
 {% endblock %}

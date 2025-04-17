@@ -20,13 +20,6 @@
         margin-bottom: 2rem;
     }
 
-    .rv-time-inputs {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
     .flatpickr-input {
         background: rgba(255, 255, 255, 0.9);
         border: 2px solid #e2e8f0;
@@ -62,15 +55,9 @@
         {{ form_widget(form.type_consultation_id, {'attr': {'class': 'form-select'}}) }}
     </div>
 
-    <div class="rv-time-inputs">
-        <div>
-            {{ form_label(form.start_time) }}
-            {{ form_widget(form.start_time, {'attr': {'class': 'flatpickr-time'}}) }}
-        </div>
-        <div>
-            {{ form_label(form.end_time) }}
-            {{ form_widget(form.end_time, {'attr': {'class': 'flatpickr-time'}}) }}
-        </div>
+    <div class="mb-4">
+        {{ form_label(form.start_time) }}
+        {{ form_widget(form.start_time, {'attr': {'class': 'flatpickr-time'}}) }}
     </div>
 
     <div class="d-flex justify-content-end gap-3 mt-4">
@@ -89,10 +76,10 @@
     // Date picker
     flatpickr('.flatpickr-date', {
         dateFormat: "Y-m-d",
-        locale: "en" // Set your locale
+        locale: "en"
     });
 
-    // Time pickers
+    // Time picker
     flatpickr('.flatpickr-time', {
         enableTime: true,
         noCalendar: true,
