@@ -3,19 +3,18 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use App\Entity\Utilisateur;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\Utilisateur;
 use App\Entity\Dossiermedicale;
 
 #[ORM\Entity]
 class Patient
 {
-
     #[ORM\Id]
-        #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "patients")]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Utilisateur $id;
+    #[ORM\OneToOne(targetEntity: Utilisateur::class, cascade: ["persist"])]
+    #[ORM\JoinColumn(name: "id", referencedColumnName: "id")]
+    private ?Utilisateur $utilisateur = null;// Ici, le champ id est un ManyToOne vers Utilisateur
 
     #[ORM\Column(type: "date")]
     private \DateTimeInterface $dateNaissance;
@@ -23,72 +22,212 @@ class Patient
     #[ORM\Column(type: "string", length: 255)]
     private string $adresse;
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function setId($value)
-    {
-        $this->id = $value;
-    }
-
-    public function getDateNaissance()
-    {
-        return $this->dateNaissance;
-    }
-
-    public function setDateNaissance($value)
-    {
-        $this->dateNaissance = $value;
-    }
-
-    public function getAdresse()
-    {
-        return $this->adresse;
-    }
-
-    public function setAdresse($value)
-    {
-        $this->adresse = $value;
-    }
-
     #[ORM\OneToMany(mappedBy: "Id_PatientAs", targetEntity: Assurance::class)]
     private Collection $assurances;
 
     #[ORM\OneToMany(mappedBy: "id_patient", targetEntity: Dossiermedicale::class)]
     private Collection $dossiermedicales;
 
+    #[ORM\OneToMany(mappedBy: "patient_id", targetEntity: Ordonnance::class)]
+    private Collection $ordonnances;
+
     #[ORM\OneToMany(mappedBy: "patient_id", targetEntity: Avis::class)]
     private Collection $aviss;
 
-        public function getAviss(): Collection
-        {
-            return $this->aviss;
-        }
-    
-        public function addAvis(Avis $avis): self
-        {
-            if (!$this->aviss->contains($avis)) {
-                $this->aviss[] = $avis;
-                $avis->setPatient_id($this);
-            }
-    
-            return $this;
-        }
-    
-        public function removeAvis(Avis $avis): self
-        {
-            if ($this->aviss->removeElement($avis)) {
-                // set the owning side to null (unless already changed)
-                if ($avis->getPatient_id() === $this) {
-                    $avis->setPatient_id(null);
-                }
-            }
-    
-            return $this;
+    #[ORM\OneToMany(mappedBy: "PatientId", targetEntity: Rendezvous::class)]
+    private Collection $rendezvouss;
+
+    public function __construct()
+    {
+        $this->dateNaissance = new \DateTime('2000-01-01'); // Valeur par défaut
+        $this->adresse = 'Adresse par défaut'; // Valeur par défaut
+        $this->assurances = new ArrayCollection();
+        $this->dossiermedicales = new ArrayCollection();
+        $this->ordonnances = new ArrayCollection();
+        $this->aviss = new ArrayCollection();
+        $this->rendezvouss = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->utilisateur ? $this->utilisateur->getId() : null;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
+
+        // Synchroniser le côté inverse de la relation
+        if ($utilisateur !== null && $utilisateur->getPatient() !== $this) {
+            $utilisateur->setPatient($this);  // Assure la relation inverse
         }
 
-    #[ORM\OneToMany(mappedBy: "patient_id", targetEntity: Ordonnance::class)]
-    private Collection $ordonnances;
+        return $this;
+    }
+
+  
+
+    public function getDateNaissance(): \DateTimeInterface
+    {
+        return $this->dateNaissance;
+    }
+
+    public function setDateNaissance(\DateTimeInterface $dateNaissance): self
+    {
+        $this->dateNaissance = $dateNaissance;
+        return $this;
+    }
+
+    public function getAdresse(): string
+    {
+        return $this->adresse;
+    }
+
+    public function setAdresse(string $adresse): self
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+    
+
+
+    // Relations avec Ordonnances
+    public function getOrdonnances(): Collection
+    {
+        return $this->ordonnances;
+    }
+
+    public function addOrdonnance(Ordonnance $ordonnance): self
+    {
+        if (!$this->ordonnances->contains($ordonnance)) {
+            $this->ordonnances[] = $ordonnance;
+            $ordonnance->setPatient_id($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrdonnance(Ordonnance $ordonnance): self
+    {
+        if ($this->ordonnances->removeElement($ordonnance)) {
+            if ($ordonnance->getPatient_id() === $this) {
+                $ordonnance->setPatient_id(null);
+            }
+        }
+
+        return $this;
+    }
+
+    // Relations avec Rendezvous
+    public function getRendezvouss(): Collection
+    {
+        return $this->rendezvouss;
+    }
+
+    public function addRendezvous(Rendezvous $rendezvous): self
+    {
+        if (!$this->rendezvouss->contains($rendezvous)) {
+            $this->rendezvouss[] = $rendezvous;
+            $rendezvous->setPatientId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRendezvous(Rendezvous $rendezvous): self
+    {
+        if ($this->rendezvouss->removeElement($rendezvous)) {
+            if ($rendezvous->getPatientId() === $this) {
+                $rendezvous->setPatientId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    // Relations avec Assurance
+    public function getAssurances(): Collection
+    {
+        return $this->assurances;
+    }
+
+    public function addAssurance(Assurance $assurance): self
+    {
+        if (!$this->assurances->contains($assurance)) {
+            $this->assurances[] = $assurance;
+            $assurance->setIdPatientAs($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAssurance(Assurance $assurance): self
+    {
+        if ($this->assurances->removeElement($assurance)) {
+            if ($assurance->getIdPatientAs() === $this) {
+                $assurance->setIdPatientAs(null);
+            }
+        }
+
+        return $this;
+    }
+
+    // Relations avec Dossiermedicale
+    public function getDossiermedicales(): Collection
+    {
+        return $this->dossiermedicales;
+    }
+
+    public function addDossiermedicale(Dossiermedicale $dossiermedicale): self
+    {
+        if (!$this->dossiermedicales->contains($dossiermedicale)) {
+            $this->dossiermedicales[] = $dossiermedicale;
+            $dossiermedicale->setIdPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDossiermedicale(Dossiermedicale $dossiermedicale): self
+    {
+        if ($this->dossiermedicales->removeElement($dossiermedicale)) {
+            if ($dossiermedicale->getIdPatient() === $this) {
+                $dossiermedicale->setIdPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    // Relations avec Avis
+    public function getAviss(): Collection
+    {
+        return $this->aviss;
+    }
+
+    public function addAvis(Avis $avis): self
+    {
+        if (!$this->aviss->contains($avis)) {
+            $this->aviss[] = $avis;
+            $avis->setPatientId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvis(Avis $avis): self
+    {
+        if ($this->aviss->removeElement($avis)) {
+            if ($avis->getPatientId() === $this) {
+                $avis->setPatientId(null);
+            }
+        }
+
+        return $this;
+    }
 }

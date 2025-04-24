@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel Utilisateur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .role-specific-field {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Créer un nouvel utilisateur</h1>
+
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.nom) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.prenom) }}
+                </div>
+            </div>
+            
+            {{ form_row(form.email) }}
+            {{ form_row(form.mot_de_passe) }}
+            
+            <div class="form-group">
+                {{ form_label(form.role) }}
+                {{ form_widget(form.role, {'attr': {'class': 'form-control role-selector'}}) }}
+                {{ form_errors(form.role) }}
+            </div>
+            
+         
+           
+
+           
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelector = document.querySelector('.role-selector');
+            const medecinFields = document.getElementById('medecin-fields');
+            const pharmacienFields = document.getElementById('pharmacien-fields');
+
+            function toggleFields() {
+                const role = roleSelector.value;
+                
+                // Masquer tous les champs spécifiques d'abord
+                medecinFields.style.display = 'none';
+                pharmacienFields.style.display = 'none';
+                
+                // Afficher seulement les champs correspondant au rôle sélectionné
+                if (role === 'medecin') {
+                    medecinFields.style.display = 'block';
+                } else if (role === 'pharmacien') {
+                    pharmacienFields.style.display = 'block';
+                }
+            }
+
+            // Écouter les changements de rôle
+            roleSelector.addEventListener('change', toggleFields);
+            
+            // Initialiser l'affichage au chargement de la page
+            toggleFields();
+        });
+    </script>
+{% endblock %}

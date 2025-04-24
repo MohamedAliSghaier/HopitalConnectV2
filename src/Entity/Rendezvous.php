@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use App\Entity\Medecin;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Analyse;
 
@@ -18,20 +19,22 @@ class Rendezvous
     #[ORM\Column(type: "date")]
     private \DateTimeInterface $date;
 
-    #[ORM\Column(type: "integer")]
-    private int $type_consultation_id;
+    
+        #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "rendezvouss")]
+    #[ORM\JoinColumn(name: 'PatientId', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Patient $PatientId;
 
-    #[ORM\Column(type: "integer")]
-    private int $PatientId;
-
-    #[ORM\Column(type: "integer")]
-    private int $medecinId;
+        #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: "rendezvouss")]
+    #[ORM\JoinColumn(name: 'medecinId', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Medecin $medecinId;
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $start_time;
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $end_time;
+    #[ORM\Column(type: "integer")]
+    private int $type_consultation_id;
 
     public function getId()
     {
@@ -106,90 +109,9 @@ class Rendezvous
     #[ORM\OneToMany(mappedBy: "id_patient", targetEntity: Analyse::class)]
     private Collection $analyses;
 
-        public function getAnalyses(): Collection
-        {
-            return $this->analyses;
-        }
-    
-        public function addAnalyse(Analyse $analyse): self
-        {
-            if (!$this->analyses->contains($analyse)) {
-                $this->analyses[] = $analyse;
-                $analyse->setId_patient($this);
-            }
-    
-            return $this;
-        }
-    
-        public function removeAnalyse(Analyse $analyse): self
-        {
-            if ($this->analyses->removeElement($analyse)) {
-                // set the owning side to null (unless already changed)
-                if ($analyse->getId_patient() === $this) {
-                    $analyse->setId_patient(null);
-                }
-            }
-    
-            return $this;
-        }
+    //#[ORM\OneToMany(mappedBy: "id_medecin", targetEntity: Analyse::class)]
+    //private Collection $analyses;
 
-    #[ORM\OneToMany(mappedBy: "id_medecin", targetEntity: Analyse::class)]
-    private Collection $analyses;
-
-        public function getAnalyses(): Collection
-        {
-            return $this->analyses;
-        }
-    
-        public function addAnalyse(Analyse $analyse): self
-        {
-            if (!$this->analyses->contains($analyse)) {
-                $this->analyses[] = $analyse;
-                $analyse->setId_medecin($this);
-            }
-    
-            return $this;
-        }
-    
-        public function removeAnalyse(Analyse $analyse): self
-        {
-            if ($this->analyses->removeElement($analyse)) {
-                // set the owning side to null (unless already changed)
-                if ($analyse->getId_medecin() === $this) {
-                    $analyse->setId_medecin(null);
-                }
-            }
-    
-            return $this;
-        }
-
-    #[ORM\OneToMany(mappedBy: "id_rendezvous", targetEntity: Analyse::class)]
-    private Collection $analyses;
-
-        public function getAnalyses(): Collection
-        {
-            return $this->analyses;
-        }
-    
-        public function addAnalyse(Analyse $analyse): self
-        {
-            if (!$this->analyses->contains($analyse)) {
-                $this->analyses[] = $analyse;
-                $analyse->setId_rendezvous($this);
-            }
-    
-            return $this;
-        }
-    
-        public function removeAnalyse(Analyse $analyse): self
-        {
-            if ($this->analyses->removeElement($analyse)) {
-                // set the owning side to null (unless already changed)
-                if ($analyse->getId_rendezvous() === $this) {
-                    $analyse->setId_rendezvous(null);
-                }
-            }
-    
-            return $this;
-        }
+    //#[ORM\OneToMany(mappedBy: "id_rendezvous", targetEntity: Analyse::class)]
+    //private Collection $analyses;
 }

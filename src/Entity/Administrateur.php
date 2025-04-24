@@ -3,25 +3,24 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use App\Entity\Utilisateur;
 
 #[ORM\Entity]
 class Administrateur
 {
-
     #[ORM\Id]
-        #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "administrateurs")]
+    #[ORM\OneToOne(targetEntity: Utilisateur::class, inversedBy: "administrateur")]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Utilisateur $id;
+    private Utilisateur $utilisateur;
 
-    public function getId()
+    public function getUtilisateur(): Utilisateur
     {
-        return $this->id;
+        return $this->utilisateur;
     }
 
-    public function setId($value)
+    public function setUtilisateur(Utilisateur $utilisateur): self
     {
-        $this->id = $value;
+        $this->utilisateur = $utilisateur;
+        return $this;
     }
 }

@@ -14,10 +14,7 @@ class Ordonnance
     #[ORM\Column(type: "integer")]
     private int $id;
 
-        #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: "ordonnances")]
-    #[ORM\JoinColumn(name: 'medecin_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Medecin $medecin_id;
-
+    
         #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "ordonnances")]
     #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Patient $patient_id;

@@ -34,7 +34,7 @@ class GenerateEntitiesCommand extends Command
     {
         parent::__construct();
         $this->connection = $connection;
-        $this->filesystem = $filesystem;
+        // $this->filesystem = $filesystem;
     }
 
     /**

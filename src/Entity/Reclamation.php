@@ -12,7 +12,6 @@ class Reclamation
 
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
-    #[ORM\GeneratedValue]  // Add this to auto-generate the ID
     private int $id;
 
         #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "reclamations")]

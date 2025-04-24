@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>{% block title %}Internal Page{% endblock %}</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/images/favicon.svg') }}" />
+
+    {% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/LineIcons.2.0.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/tiny-slider.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/glightbox.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
+    {% endblock %}
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-light shadow-sm p-3">
+            <h5 class="text-primary mb-4">Menu</h5>
+            <ul class="nav flex-column">
+                <!-- Boutons pour l'administrateur -->
+                {% if 'ROLE_ADMINISTRATEUR' in app.user.roles %}
+                <li class="nav-item mb-2">
+                    <a href="{{ path('admin_utilisateurs_new') }}" class="nav-link">
+                        <i class="fas fa-user-plus me-2"></i>Ajouter un Utilisateur
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ path('admin_utilisateurs') }}" class="nav-link">
+                        <i class="fas fa-users me-2"></i>Liste des Utilisateurs
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ path('admin_statistiques') }}" class="nav-link">
+                        <i class="fas fa-chart-bar me-2"></i>Statistiques
+                    </a>
+                </li>
+            {% endif %}
+    
+                <!-- Boutons pour le médecin -->
+                {% if 'ROLE_MEDECIN' in app.user.roles %}
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('medecin_dashboard') }}" class="nav-link">
+                            <i class="fas fa-stethoscope me-2"></i>Tableau de Bord Médecin
+                        </a>
+                    </li>
+                {% endif %}
+    
+                <!-- Boutons pour le patient -->
+                {% if 'ROLE_PATIENT' in app.user.roles %}
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('patient_dashboard') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>Tableau de Bord Patient
+                        </a>
+                    </li>
+                {% endif %}
+    
+                <!-- Boutons pour le pharmacien -->
+                {% if 'ROLE_PHARMACIEN' in app.user.roles %}
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('pharmacien_dashboard') }}" class="nav-link">
+                            <i class="fas fa-pills me-2"></i>Tableau de Bord Pharmacien
+                        </a>
+                    </li>
+                {% endif %}
+    
+                <!-- Bouton de déconnexion -->
+                <li class="nav-item mt-4">
+                    <a href="{{ path('app_logout') }}" class="nav-link text-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="content flex-grow-1 p-4">
+            {% block body %}
+            <!-- Custom body content for internal pages -->
+            {% endblock %}
+        </div>
+    </div>
+    {% block js %}
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/wow.min.js') }}"></script>
+    <script src="{{ asset('assets/js/tiny-slider.js') }}"></script>
+    <script src="{{ asset('assets/js/glightbox.min.js') }}"></script>
+    <script src="{{ asset('assets/js/count-up.min.js') }}"></script>
+    <script src="{{ asset('assets/js/imagesloaded.min.js') }}"></script>
+    <script src="{{ asset('assets/js/isotope.min.js') }}"></script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+    {% endblock %}
+</body>
+
+</html>

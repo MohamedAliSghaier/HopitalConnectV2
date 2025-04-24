@@ -1,0 +1,50 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-card p-4 shadow-sm rounded">
+        <h1 class="h3 text-primary mb-4">Statistiques</h1>
+
+        <h2 class="h5">Statistiques par rôle</h2>
+        <ul>
+            {% for role, count in rolesStats %}
+                <li>{{ role }} : {{ count }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2 class="h5 mt-4">Liste des Utilisateurs</h2>
+        <form method="get" class="mb-3">
+            <input type="text" name="search" value="{{ search }}" placeholder="Rechercher par nom" class="form-control mb-2">
+            <button type="submit" class="btn btn-primary btn-sm">Rechercher</button>
+        </form>
+
+        <a href="{{ path('admin_statistiques', { sort: 'nom' }) }}" class="btn btn-secondary btn-sm">Trier par Nom</a>
+        <a href="{{ path('admin_statistiques', { sort: 'id' }) }}" class="btn btn-secondary btn-sm">Trier par ID</a>
+
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Mot_De_Passe</th>
+                    <th>Rôle</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.id }}</td>
+                        <td>{{ utilisateur.nom }}</td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td>{{ utilisateur.mot_de_passe }}</td>
+                        <td>{{ utilisateur.roles|join(', ') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

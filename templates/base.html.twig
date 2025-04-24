@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="{{ asset('assets/css/tiny-slider.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/css/glightbox.min.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}" />
 
     {% endblock %}
     
@@ -41,14 +42,7 @@
     <![endif]-->
 
     <!-- Preloader -->
-    <div class="preloader">
-        <div class="preloader-inner">
-            <div class="preloader-icon">
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </div>
+    
     <!-- /End Preloader -->
 
     <!-- Start Header Area -->
@@ -80,15 +74,18 @@
                                             <li class="nav-item active"><a href="index.html">Home Default</a></li>
                                         </ul>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="page-scroll dd-menu collapsed" href="javascript:void(0)"
-                                            data-bs-toggle="collapse" data-bs-target="#submenu-1-2"
-                                            aria-controls="navbarSupportedContent" aria-expanded="false"
-                                            aria-label="Toggle navigation">Pages</a>
-                                        <ul class="sub-menu collapse" id="submenu-1-2">
-                                            <li class="nav-item"><a href="about-us.html">About Us</a></li>
-                                        </ul>
-                                    </li>
+                                   <li class="nav-item">
+      <a class="page-scroll dd-menu collapsed" href="javascript:void(0)"
+        data-bs-toggle="collapse" data-bs-target="#submenu-1-2"
+        aria-controls="navbarSupportedContent" aria-expanded="false"
+        aria-label="Toggle navigation">Pages</a>
+    <ul class="sub-menu collapse" id="submenu-1-2">
+        <li class="nav-item"><a href="about-us.html">About Us</a></li>
+        <li class="nav-item"><a href="/login">Sign In</a></li>
+        <li class="nav-item"><a href="/register">Sign Up</a></li>
+    </ul>
+</li>
+
                                     <li class="nav-item">
                                         <a href="javascript:void(0)" aria-label="Toggle navigation">Services</a>
                                     </li>
@@ -117,10 +114,11 @@
    
     {% block body %}
 
-    
-                {% endblock %}
+   
+                
 
-           
+          
+    {% endblock %}
     <!-- Start Footer Area -->
     <footer class="footer overlay">
         <!-- Start Footer Top -->
@@ -283,7 +281,7 @@
     <script src="assets/js/isotope.min.js"></script>
     <script src="assets/js/main.js"></script>
     <script type="text/javascript">
-    {% endblock %}
+   
         //======== Hero Slider
         var slider = new tns({
             container: '.hero-slider',
@@ -341,6 +339,8 @@
                 }
             }
         });
+    </script>
+{% endblock %}
 
         //====== counter up 
         var cu = new counterUp({
@@ -370,6 +370,33 @@
                     columnWidth: '.grid-item'
                 }
             });
+           
+<style>
+    .hero-form {
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+    }
+    .form-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #2F2F2F;
+    }
+    .form-control {
+        height: 50px;
+        margin-bottom: 20px;
+    }
+    .btn-block {
+        width: 100%;
+        padding: 12px;
+    }
+    .text-danger {
+        color: #dc3545;
+        font-size: 14px;
+    }
+    </style>
+    
 
             let filterButtons = document.querySelectorAll('.portfolio-btn-wrapper button');
             filterButtons.forEach(e =>
@@ -382,7 +409,10 @@
                 })
             );
         });
+    
     </script>
 </body>
+
+
 
 </html>

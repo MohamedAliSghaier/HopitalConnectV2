@@ -4,29 +4,33 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use App\Entity\Utilisateur;
-use Doctrine\Common\Collections\Collection;
-use App\Entity\Medicament;
-
 #[ORM\Entity]
 class Pharmacien
 {
-
     #[ORM\Id]
-        #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "pharmaciens")]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Utilisateur $id;
+    #[ORM\OneToOne(inversedBy: "pharmacien", targetEntity: Utilisateur::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: "id", referencedColumnName: "id", onDelete: "CASCADE", nullable: false)]
+    private ?Utilisateur $utilisateur = null;
 
-    public function getId()
+    public function getId(): ?int
     {
-        return $this->id;
+        return $this->utilisateur?->getId();
     }
 
-    public function setId($value)
+    public function getUtilisateur(): ?Utilisateur
     {
-        $this->id = $value;
+        return $this->utilisateur;
     }
 
-    #[ORM\OneToMany(mappedBy: "pharmacien_id", targetEntity: Medicament::class)]
-    private Collection $medicaments;
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
+
+        // Synchroniser le côté inverse de la relation
+        if ($utilisateur !== null && $utilisateur->getPharmacien() !== $this) {
+            $utilisateur->setPharmacien($this);
+        }
+
+        return $this;
+    }
 }

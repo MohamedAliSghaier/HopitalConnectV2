@@ -3,25 +3,22 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Medecin;
+
 use App\Entity\Patient;
 
 #[ORM\Entity]
 class Avis
 {
+
     #[ORM\Id]
-    #[ORM\GeneratedValue]  // This allows Doctrine to automatically generate the ID.
     #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "aviss")]
+        #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "aviss")]
     #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Patient $patient_id;
 
-    #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: "aviss")]
-    #[ORM\JoinColumn(name: 'medecin_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Medecin $medecin_id;
-
+    
     #[ORM\Column(type: "text")]
     private string $commentaire;
 
@@ -31,63 +28,63 @@ class Avis
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $date_avis;
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
 
-    public function getPatient_id(): Patient
+    public function setId($value)
+    {
+        $this->id = $value;
+    }
+
+    public function getPatient_id()
     {
         return $this->patient_id;
     }
 
-    public function setPatient_id(Patient $value): self
+    public function setPatient_id($value)
     {
         $this->patient_id = $value;
-        return $this;
     }
 
-    public function getMedecin_id(): Medecin
+    public function getMedecin_id()
     {
         return $this->medecin_id;
     }
 
-    public function setMedecin_id(Medecin $value): self
+    public function setMedecin_id($value)
     {
         $this->medecin_id = $value;
-        return $this;
     }
 
-    public function getCommentaire(): string
+    public function getCommentaire()
     {
         return $this->commentaire;
     }
 
-    public function setCommentaire(string $value): self
+    public function setCommentaire($value)
     {
         $this->commentaire = $value;
-        return $this;
     }
 
-    public function getNote(): int
+    public function getNote()
     {
         return $this->note;
     }
 
-    public function setNote(int $value): self
+    public function setNote($value)
     {
         $this->note = $value;
-        return $this;
     }
 
-    public function getDate_avis(): \DateTimeInterface
+    public function getDate_avis()
     {
         return $this->date_avis;
     }
 
-    public function setDate_avis(\DateTimeInterface $value): self
+    public function setDate_avis($value)
     {
         $this->date_avis = $value;
-        return $this;
     }
 }
