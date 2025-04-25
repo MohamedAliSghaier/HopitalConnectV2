@@ -1,0 +1,15 @@
+{# filepath: c:\Users\LENOVO\Downloads\PIsymfony-Ordonnance-Medicament\PIsymfony-Ordonnance-Medicament\templates\assurance\update.html.twig #}
+{% extends 'base_patient.html.twig' %}
+
+{% block title %}Update Assurance{% endblock %}
+
+{% block body %}
+    <h1>Update Assurance</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-success">Save Changes</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('assurance_details', { id: assurance.id }) }}" class="btn btn-secondary">Back to Details</a>
+{% endblock %}

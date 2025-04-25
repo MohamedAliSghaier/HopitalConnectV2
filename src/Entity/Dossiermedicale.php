@@ -1,209 +1,303 @@
 <?php
+// src/Entity/Dossiermedicale.php
 
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use App\Entity\Patient;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: "App\Repository\DossiermedicaleRepository")]
 class Dossiermedicale
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")] // Ensure the primary key is auto-generated
     #[ORM\Column(type: "integer")]
-    private int $id;
+    private ?int $id = null;
 
-        #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "dossiermedicales")]
-    #[ORM\JoinColumn(name: 'id_patient', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Patient $id_patient;
+    #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "dossiermedicales")]
+    #[ORM\JoinColumn(name: "id_patient", referencedColumnName: "id", onDelete: "CASCADE")]
+    private ?Patient $id_patient = null;
 
-    #[ORM\Column(type: "float")]
-    private float $taille;
+    #[ORM\Column(type: "float", nullable: true)]
+    private ?float $taille = null;
 
-    #[ORM\Column(type: "float")]
-    private float $poids;
+    #[ORM\Column(type: "float", nullable: true)]
+    private ?float $poids = null;
 
-    #[ORM\Column(type: "string")]
-    private string $maladies;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $maladies = null;
 
-    #[ORM\Column(type: "string")]
-    private string $antecedents_cardiovasculaires_familiaux;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $maladies_details = null;
 
-    #[ORM\Column(type: "string")]
-    private string $asthmatique;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $antecedents_cardiovasculaires_familiaux = null;
 
-    #[ORM\Column(type: "string")]
-    private string $suivi_dentaire_regulier;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $antecedents_cardiovasculaires_familiaux_details = null;
 
-    #[ORM\Column(type: "string")]
-    private string $antecedents_chirurgicaux;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $asthmatique = null;
 
-    #[ORM\Column(type: "string")]
-    private string $allergies;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $asthmatique_details = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $profession;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $suivi_dentaire_regulier = null;
 
-    #[ORM\Column(type: "string")]
-    private string $niveau_de_stress;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $suivi_dentaire_regulier_details = null;
 
-    #[ORM\Column(type: "string")]
-    private string $qualite_de_sommeil;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $antecedents_chirurgicaux = null;
 
-    #[ORM\Column(type: "string")]
-    private string $activite_physique;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $antecedents_chirurgicaux_details = null;
 
-    #[ORM\Column(type: "string")]
-    private string $situation_familiale;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $allergies = null;
 
-    public function getId()
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $allergies_details = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $profession = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $niveau_de_stress = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $qualite_de_sommeil = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $activite_physique = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $situation_familiale = null;
+
+    // Getters and Setters
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId($value)
-    {
-        $this->id = $value;
-    }
-
-    public function getId_patient()
+    public function getIdPatient(): ?Patient
     {
         return $this->id_patient;
     }
 
-    public function setId_patient($value)
+    public function setIdPatient(?Patient $id_patient): self
     {
-        $this->id_patient = $value;
+        $this->id_patient = $id_patient;
+        return $this;
     }
 
-    public function getTaille()
+    public function getTaille(): ?float
     {
         return $this->taille;
     }
 
-    public function setTaille($value)
+    public function setTaille(?float $taille): self
     {
-        $this->taille = $value;
+        $this->taille = $taille;
+        return $this;
     }
 
-    public function getPoids()
+    public function getPoids(): ?float
     {
         return $this->poids;
     }
 
-    public function setPoids($value)
+    public function setPoids(?float $poids): self
     {
-        $this->poids = $value;
+        $this->poids = $poids;
+        return $this;
     }
 
-    public function getMaladies()
+    public function getMaladies(): ?string
     {
         return $this->maladies;
     }
 
-    public function setMaladies($value)
+    public function setMaladies(?string $maladies): self
     {
-        $this->maladies = $value;
+        $this->maladies = $maladies;
+        return $this;
     }
 
-    public function getAntecedents_cardiovasculaires_familiaux()
+    public function getMaladiesDetails(): ?string
+    {
+        return $this->maladies_details;
+    }
+
+    public function setMaladiesDetails(?string $maladies_details): self
+    {
+        $this->maladies_details = $maladies_details;
+        return $this;
+    }
+
+    public function getAntecedentsCardiovasculairesFamiliaux(): ?string
     {
         return $this->antecedents_cardiovasculaires_familiaux;
     }
 
-    public function setAntecedents_cardiovasculaires_familiaux($value)
+    public function setAntecedentsCardiovasculairesFamiliaux(?string $antecedents_cardiovasculaires_familiaux): self
     {
-        $this->antecedents_cardiovasculaires_familiaux = $value;
+        $this->antecedents_cardiovasculaires_familiaux = $antecedents_cardiovasculaires_familiaux;
+        return $this;
     }
 
-    public function getAsthmatique()
+    public function getAntecedentsCardiovasculairesFamiliauxDetails(): ?string
+    {
+        return $this->antecedents_cardiovasculaires_familiaux_details;
+    }
+
+    public function setAntecedentsCardiovasculairesFamiliauxDetails(?string $antecedents_cardiovasculaires_familiaux_details): self
+    {
+        $this->antecedents_cardiovasculaires_familiaux_details = $antecedents_cardiovasculaires_familiaux_details;
+        return $this;
+    }
+
+    public function getAsthmatique(): ?string
     {
         return $this->asthmatique;
     }
 
-    public function setAsthmatique($value)
+    public function setAsthmatique(?string $asthmatique): self
     {
-        $this->asthmatique = $value;
+        $this->asthmatique = $asthmatique;
+        return $this;
     }
 
-    public function getSuivi_dentaire_regulier()
+    public function getAsthmatiqueDetails(): ?string
+    {
+        return $this->asthmatique_details;
+    }
+
+    public function setAsthmatiqueDetails(?string $asthmatique_details): self
+    {
+        $this->asthmatique_details = $asthmatique_details;
+        return $this;
+    }
+
+    public function getSuiviDentaireRegulier(): ?string
     {
         return $this->suivi_dentaire_regulier;
     }
 
-    public function setSuivi_dentaire_regulier($value)
+    public function setSuiviDentaireRegulier(?string $suivi_dentaire_regulier): self
     {
-        $this->suivi_dentaire_regulier = $value;
+        $this->suivi_dentaire_regulier = $suivi_dentaire_regulier;
+        return $this;
     }
 
-    public function getAntecedents_chirurgicaux()
+    public function getSuiviDentaireRegulierDetails(): ?string
+    {
+        return $this->suivi_dentaire_regulier_details;
+    }
+
+    public function setSuiviDentaireRegulierDetails(?string $suivi_dentaire_regulier_details): self
+    {
+        $this->suivi_dentaire_regulier_details = $suivi_dentaire_regulier_details;
+        return $this;
+    }
+
+    public function getAntecedentsChirurgicaux(): ?string
     {
         return $this->antecedents_chirurgicaux;
     }
 
-    public function setAntecedents_chirurgicaux($value)
+    public function setAntecedentsChirurgicaux(?string $antecedents_chirurgicaux): self
     {
-        $this->antecedents_chirurgicaux = $value;
+        $this->antecedents_chirurgicaux = $antecedents_chirurgicaux;
+        return $this;
     }
 
-    public function getAllergies()
+    public function getAntecedentsChirurgicauxDetails(): ?string
+    {
+        return $this->antecedents_chirurgicaux_details;
+    }
+
+    public function setAntecedentsChirurgicauxDetails(?string $antecedents_chirurgicaux_details): self
+    {
+        $this->antecedents_chirurgicaux_details = $antecedents_chirurgicaux_details;
+        return $this;
+    }
+
+    public function getAllergies(): ?string
     {
         return $this->allergies;
     }
 
-    public function setAllergies($value)
+    public function setAllergies(?string $allergies): self
     {
-        $this->allergies = $value;
+        $this->allergies = $allergies;
+        return $this;
     }
 
-    public function getProfession()
+    public function getAllergiesDetails(): ?string
+    {
+        return $this->allergies_details;
+    }
+
+    public function setAllergiesDetails(?string $allergies_details): self
+    {
+        $this->allergies_details = $allergies_details;
+        return $this;
+    }
+
+    public function getProfession(): ?string
     {
         return $this->profession;
     }
 
-    public function setProfession($value)
+    public function setProfession(?string $profession): self
     {
-        $this->profession = $value;
+        $this->profession = $profession;
+        return $this;
     }
 
-    public function getNiveau_de_stress()
+    public function getNiveauDeStress(): ?string
     {
         return $this->niveau_de_stress;
     }
 
-    public function setNiveau_de_stress($value)
+    public function setNiveauDeStress(?string $niveau_de_stress): self
     {
-        $this->niveau_de_stress = $value;
+        $this->niveau_de_stress = $niveau_de_stress;
+        return $this;
     }
 
-    public function getQualite_de_sommeil()
+    public function getQualiteDeSommeil(): ?string
     {
         return $this->qualite_de_sommeil;
     }
 
-    public function setQualite_de_sommeil($value)
+    public function setQualiteDeSommeil(?string $qualite_de_sommeil): self
     {
-        $this->qualite_de_sommeil = $value;
+        $this->qualite_de_sommeil = $qualite_de_sommeil;
+        return $this;
     }
 
-    public function getActivite_physique()
+    public function getActivitePhysique(): ?string
     {
         return $this->activite_physique;
     }
 
-    public function setActivite_physique($value)
+    public function setActivitePhysique(?string $activite_physique): self
     {
-        $this->activite_physique = $value;
+        $this->activite_physique = $activite_physique;
+        return $this;
     }
 
-    public function getSituation_familiale()
+    public function getSituationFamiliale(): ?string
     {
         return $this->situation_familiale;
     }
 
-    public function setSituation_familiale($value)
+    public function setSituationFamiliale(?string $situation_familiale): self
     {
-        $this->situation_familiale = $value;
+        $this->situation_familiale = $situation_familiale;
+        return $this;
     }
 }

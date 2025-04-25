@@ -1,0 +1,39 @@
+{% extends 'base_pharmacien.html.twig' %}
+
+
+{% block title %}Liste des Médicaments{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-card p-4">
+        <h1 class="h3 mb-4">Liste des Médicaments</h1>
+        <a href="{{ path('medicament_add') }}" class="btn btn-primary mb-3">Ajouter un Médicament</a>
+
+        <table class="rv-table table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medicament in medicaments %}
+                <tr>
+                    <td>{{ medicament.nom }}</td>
+                    <td>{{ medicament.stock }}</td>
+                    <td>
+                        <a href="{{ path('medicament_update', { id: medicament.id }) }}" class="btn btn-warning btn-sm">Modifier</a>
+                        <a href="{{ path('medicament_delete', { id: medicament.id }) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce médicament ?');">Supprimer</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">Aucun médicament trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

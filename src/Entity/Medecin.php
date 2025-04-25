@@ -11,7 +11,7 @@ use App\Entity\Reclamation;
 #[ORM\Entity]
 class Medecin
 {
-
+   
     #[ORM\Id]
         #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "medecins")]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id', onDelete: 'CASCADE')]
@@ -23,12 +23,12 @@ class Medecin
     #[ORM\Column(type: "integer")]
     private int $num_rdv_max;
 
-    public function getId()
+    public function getId(): Utilisateur
     {
         return $this->id;
     }
 
-    public function setId($value)
+    public function setId(Utilisateur $value): void
     {
         $this->id = $value;
     }
@@ -118,4 +118,10 @@ class Medecin
 
     #[ORM\OneToMany(mappedBy: "medecin_id", targetEntity: Reclamation::class)]
     private Collection $reclamations;
+
+    // Add this method to retrieve the doctor's name from the Utilisateur entity
+    public function getNom(): ?string
+    {
+        return $this->id->getNom(); // Access the `nom` property from the Utilisateur entity
+    }
 }

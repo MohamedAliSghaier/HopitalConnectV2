@@ -3,43 +3,50 @@
 namespace App\Form;
 
 use App\Entity\Ordonnance;
-use App\Entity\Medecin;
 use App\Entity\Patient;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Form\OrdonnanceMedicamentType; // Import the new form type
 
 class OrdonnanceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('medecin_id', EntityType::class, [
-                'class' => Medecin::class,
-                'choice_label' => 'nom', // Adjust based on your Medecin entity
-                'label' => 'Médecin',
-            ])
-            ->add('patient_id', EntityType::class, [
+            ->add('patient', EntityType::class, [
                 'class' => Patient::class,
-                'choice_label' => 'nom', // Adjust based on your Patient entity
+                'choice_label' => 'nom',
                 'label' => 'Patient',
             ])
-            ->add('medicaments', TextareaType::class, [
-                'label' => 'Médicaments',
+            ->add('medicaments', CollectionType::class, [
+                'entry_type' => OrdonnanceMedicamentType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
             ])
-            ->add('date_prescription', DateTimeType::class, [
+            ->add('date_prescription', DateType::class, [
                 'widget' => 'single_text',
+                'html5' => true,
                 'label' => 'Date de Prescription',
-                'required' => false,
+                'attr' => ['class' => 'form-control js-datepicker'],
             ])
-            ->add('instructions', TextareaType::class, [
+
+            ->add('instructions', TextType::class, [
                 'label' => 'Instructions',
             ])
-            ->add('statut', TextType::class, [
+            ->add('statut', ChoiceType::class, [
+                'choices' => [
+                    'En cours' => 'En cours',
+                    'Terminée' => 'Terminée',
+                    'Annulée' => 'Annulée',
+                ],
                 'label' => 'Statut',
             ]);
     }

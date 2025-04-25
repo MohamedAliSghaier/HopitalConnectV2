@@ -3,90 +3,112 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use App\Repository\AssuranceRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Patient;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: AssuranceRepository::class)]
 class Assurance
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $id_assurance;
+    private ?int $id = null;
 
-        #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "assurances")]
-    #[ORM\JoinColumn(name: 'Id_PatientAs', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Patient $Id_PatientAs;
+    #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "assurances")]
+    #[ORM\JoinColumn(name: "patient_id", referencedColumnName: "id", onDelete: "CASCADE")]
+    #[Assert\NotNull(message: "Patient is required")]
+    private ?Patient $patient = null;
 
     #[ORM\Column(type: "string", length: 255)]
+    #[Assert\NotBlank(message: "Name cannot be blank")]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: "Name must be at least {{ limit }} characters",
+        maxMessage: "Name cannot exceed {{ limit }} characters"
+    )]
     private string $nom;
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\NotBlank(message: "Type cannot be blank")]
     private string $type;
 
-    #[ORM\Column(type: "date")]
-    private \DateTimeInterface $date_debut;
+    #[ORM\Column(name: "date_debut", type: "date")]
+    #[Assert\NotNull(message: "Start date is required")]
+    #[Assert\LessThanOrEqual(
+        propertyPath: "dateFin",
+        message: "Start date must be before or equal to end date"
+    )]
+    private \DateTimeInterface $dateDebut;
 
-    #[ORM\Column(type: "date")]
-    private \DateTimeInterface $date_fin;
+    #[ORM\Column(name: "date_fin", type: "date")]
+    #[Assert\NotNull(message: "End date is required")]
+    #[Assert\GreaterThanOrEqual(
+        propertyPath: "dateDebut",
+        message: "End date must be after or equal to start date"
+    )]
+    private \DateTimeInterface $dateFin;
 
-    public function getId_assurance()
+    public function getId(): ?int
     {
-        return $this->id_assurance;
+        return $this->id;
     }
 
-    public function setId_assurance($value)
+    public function getPatient(): ?Patient
     {
-        $this->id_assurance = $value;
+        return $this->patient; 
+    }
+    
+    public function setPatient(?Patient $patient): self
+    {
+        $this->patient = $patient; 
+        return $this;
     }
 
-    public function getId_PatientAs()
-    {
-        return $this->Id_PatientAs;
-    }
-
-    public function setId_PatientAs($value)
-    {
-        $this->Id_PatientAs = $value;
-    }
-
-    public function getNom()
+    public function getNom(): string
     {
         return $this->nom;
     }
 
-    public function setNom($value)
+    public function setNom(string $nom): self
     {
-        $this->nom = $value;
+        $this->nom = $nom;
+        return $this;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function setType($value)
+    public function setType(string $type): self
     {
-        $this->type = $value;
+        $this->type = $type;
+        return $this;
     }
 
-    public function getDate_debut()
+    public function getDateDebut(): \DateTimeInterface
     {
-        return $this->date_debut;
+        return $this->dateDebut;
     }
 
-    public function setDate_debut($value)
+    public function setDateDebut(\DateTimeInterface $dateDebut): self
     {
-        $this->date_debut = $value;
+        $this->dateDebut = $dateDebut;
+        return $this;
     }
 
-    public function getDate_fin()
+    public function getDateFin(): \DateTimeInterface
     {
-        return $this->date_fin;
+        return $this->dateFin;
     }
 
-    public function setDate_fin($value)
+    public function setDateFin(\DateTimeInterface $dateFin): self
     {
-        $this->date_fin = $value;
+        $this->dateFin = $dateFin;
+        return $this;
     }
+
+  
 }

@@ -1,60 +1,68 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_internal.html.twig' %}
 
 {% block title %}Modifier une Ordonnance{% endblock %}
 
 {% block body %}
-<div class="rv-form-card">
-    <h2 class="h4 rv-form-header">
-        <i class="fas fa-edit me-2"></i>Modifier une Ordonnance
-    </h2>
+<div class="content-container mt-100">
+    <div class="rv-form-card">
+        <h2 class="h4 rv-form-header">
+            <i class="fas fa-edit me-2"></i>Modifier une Ordonnance
+        </h2>
 
-    {{ form_start(form) }}
+        {{ form_start(form) }}
 
-    <div class="mb-4">
-        {{ form_label(form.medecin_id) }}
-        {{ form_widget(form.medecin_id, {'attr': {'class': 'form-input'}}) }}
-        {{ form_errors(form.medecin_id) }}
+        <div class="mb-4">
+            {{ form_label(form.patient) }}
+            {{ form_widget(form.patient, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.patient) }}
+        </div>
+
+        <div class="mb-4">
+            <h3>Médicaments</h3>
+            <div id="medicaments-container" data-prototype="{{ form_widget(form.medicaments.vars.prototype)|e('html_attr') }}">
+                {{ form_widget(form.medicaments) }}
+            </div>
+            <button type="button" id="add-medicament" class="btn btn-secondary mt-2">Ajouter un médicament</button>
+        </div>
+
+        <div class="mb-4">
+            {{ form_label(form.date_prescription) }}
+            {{ form_widget(form.date_prescription, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.date_prescription) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_label(form.instructions) }}
+            {{ form_widget(form.instructions, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.instructions) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_label(form.statut) }}
+            {{ form_widget(form.statut, {'attr': {'class': 'form-input'}}) }}
+            {{ form_errors(form.statut) }}
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="fas fa-save me-2"></i>Enregistrer
+            </button>
+            <a href="{{ path('ordonnance_list') }}" class="btn btn-outline-secondary px-4">
+                <i class="fas fa-times me-2"></i>Annuler
+            </a>
+        </div>
+
+        {{ form_end(form) }}
     </div>
-
-    <div class="mb-4">
-        {{ form_label(form.patient_id) }}
-        {{ form_widget(form.patient_id, {'attr': {'class': 'form-input'}}) }}
-        {{ form_errors(form.patient_id) }}
-    </div>
-
-    <div class="mb-4">
-        {{ form_label(form.medicaments) }}
-        {{ form_widget(form.medicaments, {'attr': {'class': 'form-input'}}) }}
-        {{ form_errors(form.medicaments) }}
-    </div>
-
-    <div class="mb-4">
-        {{ form_label(form.date_prescription) }}
-        {{ form_widget(form.date_prescription, {'attr': {'class': 'form-input'}}) }}
-        {{ form_errors(form.date_prescription) }}
-    </div>
-
-    <div class="mb-4">
-        {{ form_label(form.instructions) }}
-        {{ form_widget(form.instructions, {'attr': {'class': 'form-input'}}) }}
-        {{ form_errors(form.instructions) }}
-    </div>
-
-    <div class="mb-4">
-        {{ form_label(form.statut) }}
-        {{ form_widget(form.statut, {'attr': {'class': 'form-input'}}) }}
-        {{ form_errors(form.statut) }}
-    </div>
-
-    <div class="d-flex justify-content-end gap-3 mt-4">
-        <button type="submit" class="btn btn-primary px-4">
-            <i class="fas fa-save me-2"></i>Enregistrer
-        </button>
-        <a href="{{ path('ordonnance_list') }}" class="btn btn-outline-secondary px-4">
-            <i class="fas fa-times me-2"></i>Annuler
-        </a>
-    </div>
-
-    {{ form_end(form) }}
 </div>
+
+<script>
+    document.getElementById('add-medicament').addEventListener('click', function () {
+        const container = document.getElementById('medicaments-container');
+        const prototype = container.dataset.prototype;
+        const index = container.children.length;
+        const newForm = prototype.replace(/__name__/g, index);
+        container.insertAdjacentHTML('beforeend', newForm);
+    });
+</script>
 {% endblock %}

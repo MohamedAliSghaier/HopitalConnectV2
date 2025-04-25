@@ -1,0 +1,36 @@
+{# filepath: c:\Users\LENOVO\Downloads\PIsymfony-Ordonnance-Medicament\PIsymfony-Ordonnance-Medicament\templates\assurance\details.html.twig #}
+{% extends 'base_patient.html.twig' %}
+
+{% block title %}Assurance Details{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <h1>Assurance Details</h1>
+
+    <table class="table">
+        <tr>
+            <th>Name:</th>
+            <td>{{ assurance.nom }}</td>
+        </tr>
+        <tr>
+            <th>Type:</th>
+            <td>{{ assurance.type }}</td>
+        </tr>
+        <tr>
+            <th>Start Date:</th>
+            <td>{{ assurance.dateDebut|date('Y-m-d') }}</td>
+        </tr>
+        <tr>
+            <th>End Date:</th>
+            <td>{{ assurance.dateFin|date('Y-m-d') }}</td>
+        </tr>
+        <tr>
+            <th>Patient:</th>
+            <td>{{ assurance.patient.nom }}</td>
+        </tr>
+    </table>
+
+    <a href="{{ path('assurance_list') }}" class="btn btn-secondary">Back to List</a>
+    <a href="{{ path('assurance_update', { id: assurance.id }) }}" class="btn btn-primary">Edit</a>
+    <a href="{{ path('assurance_delete', { id: assurance.id }) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this assurance?');">Delete</a>
+{% endblock %}

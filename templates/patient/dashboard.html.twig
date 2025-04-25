@@ -1,0 +1,27 @@
+{% extends 'base_patient.html.twig' %}
+
+{% block body %}
+<div class="content-container mt-100">
+
+<h1>Welcome, {{ patientName }}!</h1>
+
+<!-- Bouton de déconnexion -->
+<div style="margin-top: 20px;">
+    <a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a>
+</div>
+
+<!-- Link to view patient's ordonnances -->
+<div style="margin-top: 20px;">
+    <a href="{{ path('ordonnance_my') }}" class="btn btn-primary">Voir Mes Ordonnances</a>
+</div>
+
+<!-- Link to add assurance -->
+<div class="actions" style="margin-top: 20px;">
+    <a href="{{ path('assurance_add') }}" class="btn btn-primary">Add Assurance</a>
+</div>
+
+<!-- Link to add dossier medicale -->
+<div class="actions" style="margin-top: 20px;">
+    <a href="{{ path('dossiermedicale_add') }}" class="btn btn-primary">Ajouter un Dossier Médical</a>
+</div>
+{% endblock %}

@@ -14,59 +14,63 @@ class Medicament
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $id;
+    private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Pharmacien::class, inversedBy: "medicaments")]
-    #[ORM\JoinColumn(name: 'pharmacien_id', referencedColumnName: 'id', onDelete: 'CASCADE', nullable: true)]
+    #[ORM\JoinColumn(name: "pharmacien_id", referencedColumnName: "id", onDelete: "SET NULL")]
     private ?Pharmacien $pharmacien = null;
 
     #[ORM\Column(type: "string", length: 255)]
     #[Assert\NotBlank(message: "Le nom du médicament est obligatoire.")]
     #[Assert\Length(min: 2, max: 255, minMessage: "Le nom doit contenir au moins {{ limit }} caractères.")]
-    private string $nom;
+    private ?string $nom = null;
 
     #[ORM\Column(type: "integer")]
     #[Assert\NotBlank(message: "Le stock est obligatoire.")]
     #[Assert\PositiveOrZero(message: "Le stock doit être un nombre positif ou zéro.")]
     private int $stock;    
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     public function assignPharmacienToMedicament(int $medicamentId, int $pharmacienId, EntityManagerInterface $entityManager): void
-{
-    $medicament = $entityManager->getRepository(Medicament::class)->find($medicamentId);
+    {
+        $medicament = $entityManager->getRepository(Medicament::class)->find($medicamentId);
 
-    if (!$medicament) {
-        throw new \InvalidArgumentException("Medicament with ID $medicamentId not found.");
+        if (!$medicament) {
+            throw new \InvalidArgumentException("Medicament with ID $medicamentId not found.");
+        }
+
+        $medicament->setPharmacienById($pharmacienId, $entityManager);
+
+        $entityManager->persist($medicament);
+        $entityManager->flush();
     }
-
-    $medicament->setPharmacienById($pharmacienId, $entityManager);
-
-    $entityManager->persist($medicament);
-    $entityManager->flush();
-}
 
     public function getPharmacien(): ?Pharmacien
     {
         return $this->pharmacien;
     }
 
-    public function setPharmacien(?Pharmacien $value): void
+    public function setPharmacien(?Pharmacien $pharmacien): self
     {
-        $this->pharmacien = $value;
+        $this->pharmacien = $pharmacien;
+
+        return $this;
     }
 
-    public function getNom(): string
+    public function getNom(): ?string
     {
         return $this->nom;
     }
 
-    public function setNom(string $value): void
+    public function setNom(string $nom): self
     {
-        $this->nom = $value;
+        $this->nom = $nom;
+
+        return $this;
     }
 
     public function getStock(): int
@@ -74,8 +78,10 @@ class Medicament
         return $this->stock;
     }
 
-    public function setStock(int $value): void
+    public function setStock(int $stock): self
     {
-        $this->stock = $value;
+        $this->stock = $stock;
+
+        return $this;
     }
 }

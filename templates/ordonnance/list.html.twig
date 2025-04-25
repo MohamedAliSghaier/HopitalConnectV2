@@ -1,8 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_internal.html.twig' %}
 
 {% block title %}Liste des Ordonnances{% endblock %}
 
 {% block body %}
+<div class="content-container mt-100">
 <div class="rv-card p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0"><i class="fas fa-file-prescription me-2"></i>Liste des Ordonnances</h1>
@@ -12,7 +13,18 @@
             </a>
         </div>
     </div>
-
+    <form method="GET" action="{{ path('ordonnance_list') }}" class="mb-4">
+        <div class="col-md-6">
+            <input type="text" name="search_nom_patient" class="form-control" placeholder="Nom du patient" value="{{ search_nom_patient }}">
+        </div>
+        <div class="col-md-4">
+            <input type="date" name="search_date_prescription" class="form-control" value="{{ search_date_prescription }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+        </div>
+    </form>
+    </div>
     <table class="rv-table table table-hover align-middle">
         <thead>
             <tr>
@@ -26,15 +38,15 @@
         <tbody>
             {% for ordonnance in ordonnance_list %}
             <tr>
-                <td>{{ ordonnance.medecin_id.nom }}</td>
-                <td>{{ ordonnance.patient_id.nom }}</td>
-                <td>{{ ordonnance.date_prescription|date('d/m/Y H:i') }}</td>
+                <td>{{ ordonnance.medecin.id.nom }}</td> <!-- Access the Utilisateur's nom via Medecin -->
+                <td>{{ ordonnance.patient.nom }}</td> <!-- Access the Patient's nom -->
+                <td>{{ ordonnance.datePrescription|date('d/m/Y H:i') }}</td>
                 <td>{{ ordonnance.statut }}</td>
                 <td>
                     <div class="d-flex gap-2">
                         <a href="{{ path('ordonnance_details', {'id': ordonnance.id}) }}" 
                            class="btn btn-sm btn-outline-primary">
-                           <i class="fas fa-eye"></i>
+                           <i class="fas fa-file-medical"></i> <!-- fiche médicale -->
                         </a>
                         <a href="{{ path('ordonnance_update', {'id': ordonnance.id}) }}" 
                            class="btn btn-sm btn-outline-warning">
@@ -45,6 +57,9 @@
                            onclick="return confirm('Supprimer cette ordonnance ?')">
                            <i class="fas fa-trash"></i>
                         </a>
+                        <a href="{{ path('ordonnance_pdf', {'id': ordonnance.id}) }}" class="btn btn-success btn-sm" target="_blank">
+                            📄
+</a>
                     </div>
                 </td>
             </tr>
