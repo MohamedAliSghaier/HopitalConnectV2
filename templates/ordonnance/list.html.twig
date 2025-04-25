@@ -40,7 +40,7 @@
             <tr>
                 <td>{{ ordonnance.medecin.id.nom }}</td> <!-- Access the Utilisateur's nom via Medecin -->
                 <td>{{ ordonnance.patient.nom }}</td> <!-- Access the Patient's nom -->
-                <td>{{ ordonnance.datePrescription|date('d/m/Y H:i') }}</td>
+                <td>{{ ordonnance.datePrescription|date('d/m/Y') }}</td>
                 <td>{{ ordonnance.statut }}</td>
                 <td>
                     <div class="d-flex gap-2">
@@ -49,7 +49,7 @@
                            <i class="fas fa-file-medical"></i> <!-- fiche médicale -->
                         </a>
                         <a href="{{ path('ordonnance_update', {'id': ordonnance.id}) }}" 
-                           class="btn btn-sm btn-outline-warning">
+                           class="btn btn-outline-warning btn-sm">
                            <i class="fas fa-edit"></i>
                         </a>
                         <a href="{{ path('ordonnance_delete', {'id': ordonnance.id}) }}" 
