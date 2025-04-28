@@ -8,13 +8,9 @@ app_login:
   path: /login
   controller: App\Controller\SecurityController::login
 
-app_forgot_password:
-  path: /forgot-password
-  controller: App\Controller\SecurityController::forgotPassword
 
-app_reset_password:
-  path: /reset-password
-  controller: App\Controller\SecurityController::resetPassword
+
+
 
 app_logout:
   path: /logout

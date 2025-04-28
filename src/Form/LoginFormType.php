@@ -9,6 +9,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Email;
+use Karser\Recaptcha3Bundle\Form\Recaptcha3Type;
+use Karser\Recaptcha3Bundle\Validator\Constraints\Recaptcha3;
 
 class LoginFormType extends AbstractType
 {
@@ -27,7 +29,12 @@ class LoginFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Le mot de passe est obligatoire.']),
                 ],
+            ])
+            ->add('captcha', Recaptcha3Type::class, [
+                'constraints' => new Recaptcha3(),
+                'action_name' => 'login', // action doit correspondre au frontend
             ]);
+            
     }
 
     public function configureOptions(OptionsResolver $resolver)

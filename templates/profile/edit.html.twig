@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Mon Profil{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Modifier mon profil</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label>Nom</label>
+            <input type="text" name="nom" value="{{ user.nom }}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Prénom</label>
+            <input type="text" name="prenom" value="{{ user.prenom }}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ user.email }}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Photo de profil (facultatif)</label>
+            <input type="file" name="photo" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+    </form>
+</div>
+{% endblock %}

@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use Twilio\Rest\Client;
-use Twilio\Exceptions\TwilioException;
 
 class SmsService
 {
@@ -16,26 +15,14 @@ class SmsService
         $this->twilioNumber = $twilioNumber;
     }
 
-    public function sendSms(string $telephone, string $message): bool
+    public function sendResetCode(string $phoneNumber, string $code): void
     {
-        try {
-            $this->client->messages->create(
-                $this->formatPhoneNumber($telephone),
-                [
-                    'from' => $this->twilioNumber,
-                    'body' => $message
-                ]
-            );
-            return true;
-        } catch (TwilioException $e) {
-            // Loguer l'erreur si nécessaire
-            return false;
-        }
-    }
-
-    private function formatPhoneNumber(string $number): string
-    {
-        // Normalisation du numéro de téléphone
-        return '+'.preg_replace('/[^0-9]/', '', $number);
+        $this->client->messages->create(
+            $phoneNumber,            // ex: +2162937XXXX
+            [
+                'from' => $this->twilioNumber, // ex: +1XXXYYYZZZZ (votre Twilio number)
+                'body' => "Votre code de réinitialisation est : $code"
+            ]
+        );
     }
 }

@@ -24,6 +24,25 @@
         <!-- Sidebar -->
         <nav class="sidebar bg-light shadow-sm p-3">
             <h5 class="text-primary mb-4">Menu</h5>
+           <div class="text-center mb-4">
+    <a href="#" id="profilePhotoClick">
+        {% if app.user.photo %}
+            <img src="{{ asset('uploads/photos/' ~ app.user.photo) }}" alt="Photo de profil" class="rounded-circle mb-2" width="100" height="100" style="cursor: pointer;">
+        {% else %}
+            <img src="{{ asset('uploads/photos/default.png') }}" alt="Photo de profil" class="rounded-circle mb-2" width="100" height="100" style="cursor: pointer;">
+        {% endif %}
+    </a>
+
+    <h6 class="mt-2">{{ app.user.nom }}</h6>
+
+    <div id="profileInfo" style="display: none; margin-top: 15px;" class="text-start">
+        <p><strong>Nom:</strong> {{ app.user.nom }}</p>
+        <p><strong>Prénom:</strong> {{ app.user.prenom }}</p>
+        <p><strong>Email:</strong> {{ app.user.email }}</p>
+
+        <a href="{{ path('app_profile_edit') }}" class="btn btn-primary btn-sm mt-2">Modifier Profil</a>
+    </div>
+</div>
             <ul class="nav flex-column">
                 <!-- Boutons pour l'administrateur -->
                 {% if 'ROLE_ADMINISTRATEUR' in app.user.roles %}
@@ -96,5 +115,20 @@
     <script src="{{ asset('assets/js/main.js') }}"></script>
     {% endblock %}
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const profilePhoto = document.getElementById('profilePhotoClick');
+        const profileInfo = document.getElementById('profileInfo');
+
+        profilePhoto.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (profileInfo.style.display === 'none') {
+                profileInfo.style.display = 'block';
+            } else {
+                profileInfo.style.display = 'none';
+            }
+        });
+    });
+</script>
 
 </html>

@@ -82,15 +82,7 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
     /**
      * Compte le nombre d'utilisateurs par rôle
      */
-    public function countByRole(string $role): int
-    {
-        return $this->createQueryBuilder('u')
-            ->select('COUNT(u.id)')
-            ->andWhere('u.role = :role')
-            ->setParameter('role', $role)
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
+  
 
     /**
      * Trouve les utilisateurs avec pagination
@@ -124,5 +116,23 @@ class UtilisateurRepository extends ServiceEntityRepository implements PasswordU
                  ->getResult();
     }
     
-  
+    public function countByRole(string $role): int
+    {
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', '%"'.$role.'"%')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+    
+    public function countByGenre(string $genre): int
+    {
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.genre = :genre')
+            ->setParameter('genre', $genre)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

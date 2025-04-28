@@ -8,19 +8,22 @@ parameters:
     twilio.sid: '%env(TWILIO_SID)%'
     twilio.token: '%env(TWILIO_TOKEN)%'
     twilio.number: '%env(TWILIO_NUMBER)%'
+    recaptcha.secret_key: '%env(RECAPTCHA_SECRET_KEY)%'  # Add reCAPTCHA secret key
+    known_faces_directory: '%kernel.project_dir%/public/uploads/faces'  # Add this parameter if necessary
 
 services:
     
-    # default configuration for services in *this* file
+    # Default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    
+    # Doctrine configuration for EnumType
     App\Doctrine\DBAL\Types\EnumType:
         tags:
             - { name: doctrine.dbal.type, type: enum }
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+    # Automatically load classes in src/ as services
     App\:
         resource: '../src/'
         exclude:
@@ -28,11 +31,18 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # Register Recaptcha3Service for reCAPTCHA validation
+    App\Service\Recaptcha3Service:
+        arguments:
+            $client: '@http_client'
+            $secretKey: '%env(RECAPTCHA_SECRET_KEY)%'  # Using environment variable for secret key
+
+    # Register FaceRecognitionService if needed
     App\Service\FaceRecognitionService:
         arguments:
-            $knownFacesDir: '%known_faces_directory%'
+            $knownFacesDir: '%known_faces_directory%'  # Add correct directory for known faces
+
+    # Register SmsService for Twilio integration
     App\Service\SmsService:
         arguments:
             $sid: '%twilio.sid%'
