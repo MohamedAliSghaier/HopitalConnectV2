@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
-   '
+   
     recaptcha.secret_key: '%env(RECAPTCHA_SECRET_KEY)%'  # Add reCAPTCHA secret key
     known_faces_directory: '%kernel.project_dir%/public/uploads/faces'  # Add this parameter if necessary
 

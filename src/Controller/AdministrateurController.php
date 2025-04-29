@@ -206,40 +206,52 @@ class AdministrateurController extends AbstractController
     }
 
     #[Route('/admin/statistiques', name: 'admin_statistiques')]
-    public function statistiques(Request $request, UtilisateurRepository $UtilisateurRepository): Response
+    public function statistiques(Request $request, UtilisateurRepository $utilisateurRepository): Response
     {
-        $utilisateurs = $UtilisateurRepository->findAll();
-
-      
+        $utilisateurs = $utilisateurRepository->findAll();
+    
+        // Tri et recherche (existant)
         $sort = $request->query->get('sort', 'id');
         if ($sort === 'nom') {
             usort($utilisateurs, fn($a, $b) => strcmp($a->getNom(), $b->getNom()));
         } elseif ($sort === 'id') {
             usort($utilisateurs, fn($a, $b) => $a->getId() <=> $b->getId());
         }
-
-        
+    
         $search = $request->query->get('search', '');
         if ($search) {
             $utilisateurs = array_filter($utilisateurs, fn($u) => stripos($u->getNom(), $search) !== false);
         }
-
-        
+    
+        // Statistiques par rôle
         $rolesStats = [];
+        $genreStats = [
+            'Homme' => 0,
+            'Femme' => 0,
+            'Autre' => 0
+        ];
+    
         foreach ($utilisateurs as $utilisateur) {
+            // Statistiques par rôle
             foreach ($utilisateur->getRoles() as $role) {
                 if (!isset($rolesStats[$role])) {
                     $rolesStats[$role] = 0;
                 }
                 $rolesStats[$role]++;
             }
+    
+            // Statistiques par genre
+            $genre = $utilisateur->getGenre();
+            if ($genre && isset($genreStats[$genre])) {
+                $genreStats[$genre]++;
+            }
         }
-
+    
         return $this->render('administrateur/utilisateurs/statistiques.html.twig', [
             'utilisateurs' => $utilisateurs,
             'rolesStats' => $rolesStats,
+            'genreStats' => $genreStats,
             'search' => $search,
             'sort' => $sort,
         ]);
-    }
-}
+    }}

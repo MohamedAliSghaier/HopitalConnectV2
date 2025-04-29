@@ -43,7 +43,8 @@
         </div>
         <div class="mb-3">
             {{ form_label(registrationForm.photo) }}
-            {{ form_widget(registrationForm.photo) }}
+            {{ form_widget(registrationForm.photo, {'attr': {'class': 'form-control'}}) }}
+            <small class="form-text text-muted">Formats acceptés: JPG, PNG, GIF (max 1MB)</small>
             {{ form_errors(registrationForm.photo) }}
         </div>
         <div class="form-group mb-3">

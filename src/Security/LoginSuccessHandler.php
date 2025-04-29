@@ -38,6 +38,7 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
                 return new RedirectResponse($this->router->generate('app_default'));
         }
     }
+    
 }
 
 
