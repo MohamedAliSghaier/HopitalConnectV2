@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Snappy\Pdf;
 
@@ -176,10 +177,12 @@ class OrdonnanceController extends AbstractController
                     "SELECT o
                      FROM App\Entity\Ordonnance o
                      JOIN o.patient p
-                     JOIN p.id u
+                     JOIN p.utilisateur u
                      WHERE u.nom LIKE :searchTerm
                         OR o.date_prescription LIKE :searchTerm"
                 );
+                
+            
                 $query->setParameter('searchTerm', '%' . $searchTerm . '%');
                 $results = $query->getResult();
             }
@@ -219,10 +222,11 @@ class OrdonnanceController extends AbstractController
         $searchStatut = $request->query->get('search_statut', '');
     
         $qb = $ordonnanceRepository->createQueryBuilder('o')
-            ->leftJoin('o.patient', 'p')
-            ->leftJoin('p.id', 'u')   // Patient → Utilisateur
-            ->leftJoin('o.medecin', 'm')
-            ->leftJoin('m.id', 'mu'); // Médecin → Utilisateur
+        ->leftJoin('o.patient', 'p')
+        ->leftJoin('p.utilisateur', 'u')   // Patient -> Utilisateur
+        ->leftJoin('o.medecin', 'm')        // Ordonnance -> Medecin
+        ->leftJoin('m.id', 'mu');           // Medecin.id -> Utilisateur
+    
     
         if ($searchNomPatient) {
             $qb->andWhere('u.nom LIKE :searchNomPatient')
@@ -283,7 +287,85 @@ public function generateOrdonnancePdf(
     ]);
 }
 
-    
+#[Route('/ordonnances/graph', name: 'ordonnances_graph')]
+public function showGraph(OrdonnanceRepository $ordonnanceRepository)
+{
+    // Récupérer toutes les ordonnances
+    $ordonnances = $ordonnanceRepository->getOrdonnancesParMois();
 
+    // Vérifier si des ordonnances ont été récupérées
+    if (empty($ordonnances)) {
+        return new Response('Aucune ordonnance trouvée.');
+    }
+
+    // Initialiser un tableau pour compter les ordonnances par mois
+    $months = [];
+    foreach ($ordonnances as $ordonnance) {
+        // Utilise la date_prescription pour extraire le mois
+        $month = $ordonnance['date_prescription']->format('m'); 
+        if (!isset($months[$month])) {
+            $months[$month] = 0;
+        }
+        $months[$month]++;
+    }
+
+    // Trier les mois par ordre numérique
+    ksort($months);
+
+    return $this->render('ordonnance/graph.html.twig', [
+        'months' => array_keys($months),
+        'counts' => array_values($months),
+    ]);
+}
+
+#[Route('/ordonnance/search-ajax', name: 'ordonnance_search_ajax', methods: ['GET'])]
+public function searchAjax(Request $request, OrdonnanceRepository $ordonnanceRepository): Response
+{
+    $searchNomPatient = $request->query->get('search_nom_patient', '');
+    $searchDatePrescription = $request->query->get('search_date_prescription', '');
+    $searchStatut = $request->query->get('search_statut', '');
+    $sortBy = $request->query->get('sort_by', 'date_prescription');
+    $sortOrder = $request->query->get('sort_order', 'DESC');
+
+    $qb = $ordonnanceRepository->createQueryBuilder('o')
+        ->leftJoin('o.patient', 'p')
+        ->leftJoin('p.utilisateur', 'u')
+        ->leftJoin('o.medecin', 'm')
+        ->leftJoin('m.id', 'mu');
+
+    if ($searchNomPatient) {
+        $qb->andWhere('u.nom LIKE :searchNomPatient')
+           ->setParameter('searchNomPatient', '%' . $searchNomPatient . '%');
+    }
+
+    if ($searchDatePrescription) {
+        $qb->andWhere('o.date_prescription = :searchDatePrescription')
+           ->setParameter('searchDatePrescription', $searchDatePrescription);
+    }
+
+    if ($searchStatut) {
+        $qb->andWhere('o.statut = :searchStatut')
+           ->setParameter('searchStatut', $searchStatut);
+    }
+
+    // Ajout du tri
+    switch ($sortBy) {
+        case 'patient':
+            $qb->orderBy('u.nom', $sortOrder);
+            break;
+        case 'date_prescription':
+        default:
+            $qb->orderBy('o.date_prescription', $sortOrder);
+            break;
+    }
+
+    $ordonnances = $qb->getQuery()->getResult();
+
+    $html = $this->renderView('ordonnance/_ordonnance_list.html.twig', [
+        'ordonnance_list' => $ordonnances,
+    ]);
+
+    return new JsonResponse(['html' => $html]);
+}
 
 }

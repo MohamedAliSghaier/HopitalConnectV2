@@ -1,20 +1,43 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello OrdonnanceController!{% endblock %}
+{% block title %}Liste des Ordonnances{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container mt-4">
+    <h1 class="mb-4">Liste des Ordonnances</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/LENOVO/Downloads/PIsymfony-Feat-RendezVous_CRUD/PIsymfony-Feat-RendezVous_CRUD/src/Controller/OrdonnanceController.php</code></li>
-        <li>Your template at <code>C:/Users/LENOVO/Downloads/PIsymfony-Feat-RendezVous_CRUD/PIsymfony-Feat-RendezVous_CRUD/templates/ordonnance/index.html.twig</code></li>
-    </ul>
+    {% if ordonnances is empty %}
+        <div class="alert alert-info">
+            Aucune ordonnance trouvée.
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date de prescription</th>
+                        <th>Médecin</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ordonnance in ordonnances %}
+                        <tr>
+                            <td>{{ ordonnance.date_prescription|date('d/m/Y') }}</td>
+                            <td>{{ ordonnance.medecin.getNom() }}</td>
+                            <td>
+                                <a href="{{ path('app_ordonnance_show', {'id': ordonnance.id}) }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i> Voir
+                                </a>
+                                <a href="{{ path('app_ordonnance_qr_code', {'id': ordonnance.id}) }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-qrcode"></i> QR Code
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

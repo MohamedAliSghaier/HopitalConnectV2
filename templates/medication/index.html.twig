@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche de médicaments{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Recherche de médicaments par symptômes</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <form id="symptomsForm">
+                <div class="mb-3">
+                    <label for="symptoms" class="form-label">Symptômes (séparés par des virgules)</label>
+                    <input type="text" class="form-control" id="symptoms" name="symptoms" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div id="results" class="d-none">
+                <h2>Résultats</h2>
+                <div id="medicationsList" class="list-group"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+document.getElementById('symptomsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const symptoms = document.getElementById('symptoms').value
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+    fetch('/api/medications', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ symptoms: symptoms })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('results');
+        const medicationsList = document.getElementById('medicationsList');
+        
+        resultsDiv.classList.remove('d-none');
+        medicationsList.innerHTML = '';
+
+        if (data.error) {
+            medicationsList.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+            return;
+        }
+
+        if (data.length === 0) {
+            medicationsList.innerHTML = '<div class="alert alert-info">Aucun médicament trouvé pour ces symptômes.</div>';
+            return;
+        }
+
+        data.forEach(medication => {
+            const item = document.createElement('div');
+            item.className = 'list-group-item';
+            item.innerHTML = `
+                <h5 class="mb-1">${medication.name}</h5>
+                <p class="mb-1">${medication.description || ''}</p>
+            `;
+            medicationsList.appendChild(item);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('results').classList.remove('d-none');
+        document.getElementById('medicationsList').innerHTML = 
+            '<div class="alert alert-danger">Une erreur est survenue lors de la recherche.</div>';
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

@@ -39,6 +39,29 @@
         font-size: 0.875rem;
         margin-top: 0.5rem;
     }
+
+    .medication-search {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .medication-results {
+        margin-top: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .medication-item {
+        padding: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+        cursor: pointer;
+    }
+
+    .medication-item:hover {
+        background: #e9ecef;
+    }
 </style>
 {% endblock %}
 
@@ -62,9 +85,6 @@
         <p>Médecin connecté : <strong>{{ nomMedecinConnecte }}</strong></p>
     </div>
 
-    
-
-
     <div class="mb-4">
         {{ form_label(form.patient) }}
         {{ form_widget(form.patient, {'attr': {'class': 'form-input'}}) }}
@@ -75,6 +95,15 @@
         {% endif %}
     </div>
 
+    <div class="medication-search">
+        <h3>Recherche de médicaments par symptômes</h3>
+        <div class="input-group mb-3">
+            <input type="text" id="symptoms-input" class="form-control" placeholder="Entrez les symptômes (séparés par des virgules)">
+            <button class="btn btn-primary" type="button" id="search-medications">Rechercher</button>
+        </div>
+        <div class="medication-results" id="medication-results"></div>
+    </div>
+
     <div class="mb-4">
         <h3>Médicaments</h3>
         <div id="medicaments-container" data-prototype="{{ form_widget(form.medicaments.vars.prototype)|e('html_attr') }}">
@@ -82,16 +111,6 @@
         </div>
         <button type="button" id="add-medicament" class="btn btn-secondary mt-2">Ajouter un médicament</button>
     </div>
-
-    <script>
-        document.getElementById('add-medicament').addEventListener('click', function () {
-            const container = document.getElementById('medicaments-container');
-            const prototype = container.dataset.prototype;
-            const index = container.children.length;
-            const newForm = prototype.replace(/__name__/g, index);
-            container.insertAdjacentHTML('beforeend', newForm);
-        });
-    </script>
 
     <div class="mb-4">
         {{ form_label(form.date_prescription) }}
@@ -134,4 +153,66 @@
 
     {{ form_end(form) }}
 </div>
+</div>
+
+<script>
+    document.getElementById('add-medicament').addEventListener('click', function () {
+        const container = document.getElementById('medicaments-container');
+        const prototype = container.dataset.prototype;
+        const index = container.children.length;
+        const newForm = prototype.replace(/__name__/g, index);
+        container.insertAdjacentHTML('beforeend', newForm);
+    });
+
+    document.getElementById('search-medications').addEventListener('click', function() {
+        const symptoms = document.getElementById('symptoms-input').value;
+        if (!symptoms) {
+            alert('Veuillez entrer au moins un symptôme');
+            return;
+        }
+
+        fetch('/medications/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ symptoms: symptoms.split(',').map(s => s.trim()) })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultsContainer = document.getElementById('medication-results');
+            resultsContainer.innerHTML = '';
+            
+            if (data.error) {
+                resultsContainer.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                return;
+            }
+
+            Object.entries(data).forEach(([medication, description]) => {
+                const div = document.createElement('div');
+                div.className = 'medication-item';
+                div.innerHTML = `
+                    <strong>${medication}</strong>
+                    <p class="mb-0">${description}</p>
+                `;
+                div.addEventListener('click', () => {
+                    const container = document.getElementById('medicaments-container');
+                    const prototype = container.dataset.prototype;
+                    const index = container.children.length;
+                    const newForm = prototype.replace(/__name__/g, index);
+                    container.insertAdjacentHTML('beforeend', newForm);
+                    
+                    const lastForm = container.lastElementChild;
+                    lastForm.querySelector('input[type="text"]').value = medication;
+                });
+                resultsContainer.appendChild(div);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('medication-results').innerHTML = 
+                '<div class="alert alert-danger">Une erreur est survenue lors de la recherche</div>';
+        });
+    });
+</script>
 {% endblock %}

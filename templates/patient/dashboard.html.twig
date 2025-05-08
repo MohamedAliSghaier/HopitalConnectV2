@@ -2,26 +2,52 @@
 
 {% block body %}
 <div class="content-container mt-100">
+    <div class="rv-card p-4">
+        <h1 class="h3 mb-4">Bienvenue, {{ patientName }}!</h1>
 
-<h1>Welcome, {{ patientName }}!</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Mes Ordonnances</h5>
+                        <p class="card-text">Consultez vos ordonnances médicales.</p>
+                        <a href="{{ path('ordonnance_my') }}" class="btn btn-primary">
+                            <i class="fas fa-prescription me-2"></i>Voir Mes Ordonnances
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-<!-- Bouton de déconnexion -->
-<div style="margin-top: 20px;">
-    <a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a>
-</div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Mon Assurance</h5>
+                        <p class="card-text">Gérez vos informations d'assurance.</p>
+                        <a href="{{ path('assurance_add') }}" class="btn btn-primary">
+                            <i class="fas fa-shield-alt me-2"></i>Gérer mon Assurance
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-<!-- Link to view patient's ordonnances -->
-<div style="margin-top: 20px;">
-    <a href="{{ path('ordonnance_my') }}" class="btn btn-primary">Voir Mes Ordonnances</a>
-</div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Dossier Médical</h5>
+                        <p class="card-text">Accédez à votre dossier médical.</p>
+                        <a href="{{ path('dossiermedicale_add') }}" class="btn btn-primary">
+                            <i class="fas fa-file-medical me-2"></i>Mon Dossier Médical
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<!-- Link to add assurance -->
-<div class="actions" style="margin-top: 20px;">
-    <a href="{{ path('assurance_add') }}" class="btn btn-primary">Add Assurance</a>
-</div>
-
-<!-- Link to add dossier medicale -->
-<div class="actions" style="margin-top: 20px;">
-    <a href="{{ path('dossiermedicale_add') }}" class="btn btn-primary">Ajouter un Dossier Médical</a>
+        <div class="text-end mt-4">
+            <a href="{{ path('app_logout') }}" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+            </a>
+        </div>
+    </div>
 </div>
 {% endblock %}

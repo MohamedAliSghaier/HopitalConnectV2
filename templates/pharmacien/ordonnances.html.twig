@@ -23,9 +23,9 @@
             <tbody>
                 {% for ordonnance in ordonnances %}
                 <tr>
-                    <td>{{ ordonnance.medecin.getNom() }}</td> <!-- Access the Medecin's name via the Utilisateur entity -->
+                    <td>{{ ordonnance.medecin.getNom() }}</td>
                     <td>{{ ordonnance.patient.nom }}</td>
-                    <td>{{ ordonnance.datePrescription ? ordonnance.datePrescription|date('d/m/Y H:i') : 'Non défini' }}</td>
+                    <td>{{ ordonnance.date_prescription ? ordonnance.date_prescription|date('d/m/Y H:i') : 'Non défini' }}</td>
                     <td>
                         <ul>
                             {% for medicament in ordonnance.medicaments %}

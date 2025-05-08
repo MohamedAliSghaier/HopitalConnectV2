@@ -1,0 +1,69 @@
+{% extends 'base_patient.html.twig' %}
+
+{% block title %}Détails de l'Ordonnance{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-card p-4">
+        <h1 class="h3 mb-4"><i class="fas fa-prescription me-2"></i>Détails de l'Ordonnance</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Informations Générales</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Date de prescription :</strong> {{ ordonnance.datePrescription|date('d/m/Y') }}</p>
+                        <p><strong>Médecin :</strong> {{ ordonnance.medecin.nom }}</p>
+                        <p><strong>Statut :</strong> 
+                            <span class="badge bg-{{ ordonnance.statut == 'En cours' ? 'warning' : (ordonnance.statut == 'Terminée' ? 'success' : 'secondary') }}">
+                                {{ ordonnance.statut }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Médicaments Prescrits</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for medicament in ordonnance.medicaments %}
+                                {% set parts = medicament|split(':') %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ parts[0] }}
+                                    <span class="badge bg-primary rounded-pill">Quantité: {{ parts[1] }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if ordonnance.instructions %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Instructions</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ ordonnance.instructions }}</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ path('ordonnance_my') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+            </a>
+            <a href="{{ path('ordonnance_qr_code', {'id': ordonnance.id}) }}" class="btn btn-primary">
+                <i class="fas fa-qrcode me-2"></i>Générer QR Code
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

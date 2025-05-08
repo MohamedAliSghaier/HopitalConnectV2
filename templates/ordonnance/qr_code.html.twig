@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}QR Code de l'Ordonnance{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">QR Code de l'Ordonnance</h2>
+        </div>
+        <div class="card-body text-center">
+            {% if qrCode is defined and qrCode is not empty %}
+                <div class="mb-4">
+                    <img src="{{ qrCode }}" alt="QR Code de l'ordonnance" class="img-fluid">
+                </div>
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">Instructions :</h4>
+                    <p class="mb-0">
+                        1. Scannez ce QR code avec votre smartphone<br>
+                        2. Les détails de l'ordonnance s'afficheront directement sur votre appareil<br>
+                        3. Vous pourrez voir la liste des médicaments, les instructions et autres informations importantes
+                    </p>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    Le QR code n'est pas disponible pour cette ordonnance.
+                </div>
+            {% endif %}
+            
+            <a href="{{ path('app_ordonnance_show', {'id': ordonnance.id}) }}" class="btn btn-primary mt-3">
+                <i class="fas fa-arrow-left"></i> Retour aux détails de l'ordonnance
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 
