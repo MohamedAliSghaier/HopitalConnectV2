@@ -1,0 +1,236 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<style>
+    /* Global Styles */
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f4f7fa;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+    h1, h3, h4 {
+        color: #2a6f76; /* Accent color */
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+    .example-wrapper {
+        margin: 3em auto;
+        max-width: 1000px;
+        width: 90%;
+        background-color: #fff;
+        padding: 2em;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-size: 18px;
+    }
+    .form-group {
+        margin-bottom: 1.5em;
+    }
+    .form-group label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5em;
+        color: #257180;
+    }
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-sizing: border-box;
+        margin-top: 0.5em;
+        transition: border 0.3s ease;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+        border-color: #FD7170;
+        outline: none;
+    }
+    .form-group textarea {
+        height: 150px;
+    }
+    .form-group button {
+        padding: 12px 20px;
+        background: linear-gradient(145deg, #FD7170, #E36C64);
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .form-group button:hover {
+        background: linear-gradient(145deg, #E36C64, #FD7170);
+        transform: translateY(-2px);
+    }
+
+    /* Flash Messages */
+    .flash-success {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 10px;
+        margin-bottom: 1em;
+        border: 1px solid #c3e6cb;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+    .flash-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        margin-bottom: 1em;
+        border: 1px solid #f5c6cb;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    /* List and Form Styling */
+    ul {
+        padding-left: 20px;
+        line-height: 1.8;
+    }
+    li {
+        margin-bottom: 1.5em;
+        transition: transform 0.2s ease;
+    }
+    li:hover {
+        transform: translateX(10px);
+        cursor: pointer;
+    }
+
+    /* Buttons for Edit and Delete */
+    button {
+        padding: 10px 18px;
+        font-size: 14px;
+        background-color: #257180;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    button:hover {
+        background-color: #1d5b67;
+        transform: translateY(-2px);
+    }
+    .delete-button {
+        background-color: #d9534f;
+    }
+    .delete-button:hover {
+        background-color: #c9302c;
+    }
+
+    /* Chart Container */
+    .chart-container {
+        margin: 3rem auto;
+        max-width: 900px;
+        width: 90%;
+        padding: 1.5rem;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 450px !important;
+    }
+
+    /* Section Titles */
+    .section-title {
+        font-size: 1.6em;
+        margin-bottom: 30px;
+        color: #257180;
+        font-weight: 600;
+    }
+</style>
+
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="flash-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="example-wrapper">
+    <h3>Recent Reviews and Complaints</h3>
+
+    <div class="section-title">Reviews</div>
+    <ul>
+        {% for avis in avisList %}
+            <li>
+                <strong>Doctor:</strong> {{ avis.Medecin.utilisateur.nom }} {{ avis.Medecin.utilisateur.prenom }}<br>
+                <strong>Patient:</strong> {{ avis.Patient.utilisateur.nom }} {{ avis.Patient.utilisateur.prenom }}<br>
+                <strong>Rating:</strong> {{ avis.note }}<br>
+                <strong>Comment:</strong> {{ avis.commentaire }}
+            </li>
+        {% else %}
+            <li>No reviews yet.</li>
+        {% endfor %}
+    </ul>
+
+    <div class="section-title">Complaints</div>
+    <ul>
+        {% for reclamation in reclamationList %}
+            <li>
+                <strong>Doctor:</strong> {{ reclamation.Medecin.utilisateur.nom }} {{ reclamation.Medecin.utilisateur.prenom }}<br>
+                <strong>Patient:</strong> {{ reclamation.Utilisateur.nom }} {{ reclamation.Utilisateur.prenom }}<br>
+                <strong>Subject:</strong> {{ reclamation.sujet }}<br>
+                <strong>Description:</strong> {{ reclamation.description }}
+            </li>
+        {% else %}
+            <li>No complaints yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="chart-container">
+    <h4>Review Distribution</h4>
+    <canvas id="ratingChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ratingData = [
+        {% for avis in avisList %}
+            {{ avis.note }},
+        {% endfor %}
+    ];
+
+    var ctx = document.getElementById('ratingChart').getContext('2d');
+    var ratingChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['1', '2', '3', '4', '5'], 
+            datasets: [{
+                label: 'Number of Reviews per Rating',
+                data: [
+                    ratingData.filter(function(item) { return item == 1 }).length,
+                    ratingData.filter(function(item) { return item == 2 }).length,
+                    ratingData.filter(function(item) { return item == 3 }).length,
+                    ratingData.filter(function(item) { return item == 4 }).length,
+                    ratingData.filter(function(item) { return item == 5 }).length,
+                ],
+                backgroundColor: '#FD7170',
+                borderColor: '#E36C64',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

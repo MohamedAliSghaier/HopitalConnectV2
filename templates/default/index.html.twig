@@ -1,0 +1,251 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Patient Feedback{% endblock %}
+
+{% block body %}
+<style>
+    :root {
+        --primary-color: #257180;
+        --accent-color: #FD7170;
+        --hover-accent: #E36C64;
+        --bg-color: #f9f9f9;
+        --text-color: #333;
+        --success-bg: #d4edda;
+        --success-text: #155724;
+        --error-bg: #f8d7da;
+        --error-text: #721c24;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+    }
+
+    h1{
+        color: var(--primary-color);
+        text-align: center;
+        margin-top: 1em;
+        padding: 180px 0;
+    }
+
+    h2, h3, h4 {
+        color: var(--primary-color);
+        text-align: center;
+        margin-top: 1em;
+    }
+
+    .example-wrapper {
+        margin: 2em auto;
+        max-width: 900px;
+        background-color: #fff;
+        padding: 3em;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    p {
+        text-align: center;
+        font-size: 1.1em;
+        color: #555;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 2em;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5em;
+        color: var(--primary-color);
+    }
+
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        margin-bottom: 1.5em;
+    }
+
+    .form-group textarea {
+        height: 150px;
+    }
+
+    .form-group button,
+    button,
+    .btn {
+        padding: 12px 20px;
+        font-size: 16px;
+        background-color: var(--accent-color);
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .form-group button:hover,
+    .btn:hover {
+        background-color: var(--hover-accent);
+    }
+
+    .btn-secondary {
+        background-color: #aaa;
+    }
+
+    .btn-secondary:hover {
+        background-color: #888;
+    }
+
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    .delete-button {
+        background-color: #d9534f;
+    }
+
+    .delete-button:hover {
+        background-color: #c9302c;
+    }
+
+    .flash-success {
+        background-color: var(--success-bg);
+        color: var(--success-text);
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 1em;
+        border-left: 5px solid #28a745;
+    }
+
+    .flash-error {
+        background-color: var(--error-bg);
+        color: var(--error-text);
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 1em;
+        border-left: 5px solid #dc3545;
+    }
+
+    ul {
+        padding-left: 20px;
+    }
+
+    li {
+        margin-bottom: 1.5em;
+        line-height: 1.6;
+    }
+
+    form {
+        display: inline;
+    }
+
+    .form-section {
+        margin-bottom: 2.5em;
+    }
+</style>
+
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="flash-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="example-wrapper">
+    <h1>Submit Feedback or Complaint</h1>
+
+    <p>Use the form below to leave a review (Avis) or a complaint (Reclamation) regarding your recent appointment.</p>
+
+    <div class="form-section">
+        <h2>{{ isEdit ? 'Modifier un avis' : 'Ajouter un avis' }}</h2>
+        {{ form_start(avisForm) }}
+            <div class="form-group">
+                {{ form_widget(avisForm) }}
+            </div>
+            <button type="submit">{{ isEdit ? 'Mettre à jour' : 'Soumettre' }}</button>
+            {% if isEdit %}
+                <a href="{{ path('index') }}" class="btn btn-secondary">Annuler</a>
+            {% endif %}
+        {{ form_end(avisForm) }}
+    </div>
+
+    <div class="form-section">
+        <h3>Leave a Reclamation</h3>
+        {{ form_start(reclamationForm) }}
+            <div class="form-group">
+                {{ form_widget(reclamationForm) }}
+            </div>
+            <button type="submit">{{ isEditReclamation ? 'Mettre à jour' : 'Soumettre' }}</button>
+            {% if isEditReclamation %}
+                <a href="{{ path('index') }}" class="btn btn-secondary">Annuler</a>
+            {% endif %}
+        {{ form_end(reclamationForm) }}
+    </div>
+
+    <div class="form-section">
+        <h3>Recent Reviews and Complaints</h3>
+
+        <h4>Reviews</h4>
+        <ul>
+            {% for avis in avisList %}
+                <li>
+                    <strong>Rating:</strong> {{ avis.note }}<br>
+                    <strong>Comment:</strong> {{ avis.commentaire }}
+                    {% if avis.patient.utilisateur.id == 1 %}
+                        <a href="{{ path('index', {'edit_avis': avis.id}) }}" class="btn btn-sm btn-primary">Modifier</a>
+                        <form method="POST" action="{{ path('delete_avis', {'id': avis.id}) }}">
+                            <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this review?')">Delete</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% else %}
+                <li>No reviews yet.</li>
+            {% endfor %}
+        </ul>
+
+        <h4>Complaints</h4>
+        <ul>
+            {% for reclamation in reclamationList %}
+                <li>
+                    <strong>Sujet:</strong> {{ reclamation.sujet }}<br>
+                    <strong>Description:</strong> {{ reclamation.description }}
+                    {% if reclamation.utilisateur.id == 3 %}
+                        <a href="{{ path('index', {'edit_reclamation': reclamation.id}) }}" class="btn btn-sm btn-success">Modifier</a>
+                        <form method="POST" action="{{ path('delete_reclamation', {'id': reclamation.id}) }}">
+                            <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this complaint?')">Delete</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% else %}
+                <li>No complaints yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    function toggleEditForm(type, id) {
+        const form = document.getElementById("edit-form-" + type + "-" + id);
+        form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+    }
+</script>
+{% endblock %}
