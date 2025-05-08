@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/tiny-slider.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css" rel="stylesheet" />
+
 
     <style>
         :root {
@@ -155,12 +157,46 @@
             color: var(--gray);
             font-size: 0.9rem;
         }
+        #calendar {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .fc-event {
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85em;
+            padding: 2px 5px;
+        }
+        
+        .fc-daygrid-event-dot {
+            display: none;
+        }
+        
+        .fc-toolbar-title {
+            font-size: 1.5em;
+            color: #3a3a3a;
+        }
+        
+        .fc-button {
+            background-color: #f8f9fa !important;
+            border: 1px solid #ddd !important;
+            color: #333 !important;
+            text-transform: capitalize;
+        }
+        
+        .fc-button-active {
+            background-color: #e9ecef !important;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
 <!-- Header Area -->
-
 
 <!-- Hero Area -->
 <section class="hero-area">
@@ -202,7 +238,7 @@
                 <!-- Search Form -->
                 <div class="appointment-card mb-4 wow fadeInUp" data-wow-delay=".2s">
                     <div class="p-4">
-                        <form method="get" action="{{ path('rendezvous_list') }}" class="row g-3">
+                        <form method="get" action="{{ path('rendezvous_listmedecin') }}" class="row g-3">
                             <div class="col-md-4">
                                 <label for="type" class="form-label">Consultation Type</label>
                                 <select id="type" name="type" class="form-select">
@@ -226,7 +262,7 @@
                                         <i class="lni lni-search-alt me-2"></i> Filter
                                     </button>
                                     {% if search_type or search_date %}
-                                        <a href="{{ path('rendezvous_list') }}" class="btn btn-outline-secondary ms-2">
+                                        <a href="{{ path('rendezvous_listmedecin') }}" class="btn btn-outline-secondary ms-2">
                                             <i class="lni lni-close"></i>
                                         </a>
                                     {% endif %}
@@ -253,8 +289,7 @@
                                     <th>Date</th>
                                     <th>Type</th>
                                     <th>Time</th>
-                                    <th>Doctor</th>
-                                    <th>Specialty</th>
+                                    <th>Patient</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -272,12 +307,11 @@
                                     </td>
                                     <td>{{ rendezvous.startTime|date('H:i') }}</td>
                                     <td>
-                                        {% if rendezvous.medecinId is defined and rendezvous.medecinId is not null %}
-                                            {% set utilisateur = rendezvous.medecinId.id %}
-                                            {% if utilisateur is defined and utilisateur is not null %}
-                                                <div class="doctor-info">
-                                                    <span class="doctor-name">{{ utilisateur.prenom }} {{ utilisateur.nom }}</span>
-                                                    <span class="doctor-title">MD</span>
+                                        {% if rendezvous.PatientId is defined and rendezvous.PatientId is not null %}
+                                            {% set utilisateurPatient = rendezvous.PatientId.id %}
+                                            {% if utilisateurPatient is defined and utilisateurPatient is not null %}
+                                                <div class="patient-info">
+                                                    <span class="patient-name">{{ utilisateurPatient.prenom }} {{ utilisateurPatient.nom }}</span>
                                                 </div>
                                             {% else %}
                                                 <span class="text-muted">-</span>
@@ -286,13 +320,9 @@
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
-                                    <td>
-                                        {% if rendezvous.medecinId is defined and rendezvous.medecinId is not null %}
-                                            <span class="specialty-badge">{{ rendezvous.medecinId.specialite|capitalize }}</span>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
+                                    
+                                    
+                                    
                                    
                                 </tr>
                                 {% else %}
@@ -324,12 +354,12 @@
     <div class="pagination-container wow fadeInUp" data-wow-delay=".4s">
         <ul class="pagination">
             <li class="page-item {% if pagination.getCurrentPageNumber == 1 %}disabled{% endif %}">
-                <a class="page-link" href="{{ path('rendezvous_list', {page: 1, date: search_date, type: search_type}) }}" title="First page">
+                <a class="page-link" href="{{ path('rendezvous_listmedecin', {page: 1, date: search_date, type: search_type}) }}" title="First page">
                     <i class="lni lni-chevrons-left"></i>
                 </a>
             </li>
             <li class="page-item {% if pagination.getCurrentPageNumber == 1 %}disabled{% endif %}">
-                <a class="page-link" href="{{ path('rendezvous_list', {page: pagination.getCurrentPageNumber - 1, date: search_date, type: search_type}) }}" title="Previous">
+                <a class="page-link" href="{{ path('rendezvous_listmedecin', {page: pagination.getCurrentPageNumber - 1, date: search_date, type: search_type}) }}" title="Previous">
                     <i class="lni lni-chevron-left"></i>
                 </a>
             </li>
@@ -337,19 +367,19 @@
             {# Afficher les numéros de page #}
             {% for page in pagination.getPaginationData.pagesInRange %}
                 <li class="page-item {% if page == pagination.getCurrentPageNumber %}active{% endif %}">
-                    <a class="page-link" href="{{ path('rendezvous_list', {page: page, date: search_date, type: search_type}) }}">
+                    <a class="page-link" href="{{ path('rendezvous_listmedecin', {page: page, date: search_date, type: search_type}) }}">
                         {{ page }}
                     </a>
                 </li>
             {% endfor %}
 
             <li class="page-item {% if pagination.getCurrentPageNumber == pagination.getPageCount %}disabled{% endif %}">
-                <a class="page-link" href="{{ path('rendezvous_list', {page: pagination.getCurrentPageNumber + 1, date: search_date, type: search_type}) }}" title="Next">
+                <a class="page-link" href="{{ path('rendezvous_listmedecin', {page: pagination.getCurrentPageNumber + 1, date: search_date, type: search_type}) }}" title="Next">
                     <i class="lni lni-chevron-right"></i>
                 </a>
             </li>
             <li class="page-item {% if pagination.getCurrentPageNumber == pagination.getPageCount %}disabled{% endif %}">
-                <a class="page-link" href="{{ path('rendezvous_list', {page: pagination.getPageCount, date: search_date, type: search_type}) }}" title="Last page">
+                <a class="page-link" href="{{ path('rendezvous_listmedecin', {page: pagination.getPageCount, date: search_date, type: search_type}) }}" title="Last page">
                     <i class="lni lni-chevrons-right"></i>
                 </a>
             </li>
@@ -366,7 +396,9 @@
                 {% endif %}
                 of {{ pagination.getTotalItemCount }} appointments
             </span>
+            
         </div>
+        
     </div>
 {% endif %}
                     </div>
@@ -374,7 +406,12 @@
             </div>
         </div>
     </div>
+    <div class="container-fluid py-4">
+        <div id="calendar"></div>
+    </div>
+    
 </section>
+
 
 <!-- Footer Area -->
 
@@ -387,6 +424,8 @@
     <script src="{{ asset('assets/js/tiny-slider.js') }}"></script>
     <script src="{{ asset('assets/js/glightbox.min.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/locales-all.min.js"></script>
 
     <script>
         // Initialize WOW.js
@@ -405,6 +444,84 @@
                 const today = new Date().toISOString().split('T')[0];
                 dateInput.value = today;
             }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'fr',
+                firstDay: 1, // Monday as first day
+                navLinks: true, // can click day/week names to navigate views
+                editable: false,
+                selectable: false,
+                nowIndicator: true,
+                dayMaxEvents: true, // allow "more" link when too many events
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                buttonText: {
+                    today: 'Aujourd\'hui',
+                    month: 'Mois',
+                    week: 'Semaine',
+                    day: 'Jour',
+                    list: 'Liste'
+                },
+                events: '/calendar/eventmedecin',
+                eventClick: function(info) {
+                    // Show event details in a modal
+                    const event = info.event;
+                    const details = `
+                        <h5>${event.title}</h5>
+                        <p><strong>Patient:</strong> ${event.extendedProps.patient}</p>
+                        <p><strong>Médecin:</strong> ${event.extendedProps.medecin}</p>
+                        <p><strong>Spécialité:</strong> ${event.extendedProps.specialite}</p>
+                        <p><strong>Heure:</strong> ${event.start.toLocaleTimeString()}</p>
+                        <p><strong>Type:</strong> ${event.extendedProps.type}</p>
+                    `;
+                    
+                    // You can use your preferred modal implementation here
+                    // This example uses the browser's alert for simplicity
+                    alert(details);
+                    
+                    // If you're using Bootstrap, you could do:
+                    // $('#eventModal .modal-body').html(details);
+                    // $('#eventModal').modal('show');
+                },
+                eventContent: function(arg) {
+                    // Customize event display
+                    const timeText = arg.timeText;
+                    const titleText = arg.event.title;
+                    
+                    const arrayOfDomNodes = [];
+                    
+                    // Create a container div
+                    const container = document.createElement('div');
+                    container.className = 'fc-event-container';
+                    
+                    // Add time if available
+                    if (timeText) {
+                        const timeEl = document.createElement('div');
+                        timeEl.className = 'fc-event-time';
+                        timeEl.innerText = timeText;
+                        container.appendChild(timeEl);
+                    }
+                    
+                    // Add title
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'fc-event-title';
+                    titleEl.innerText = titleText;
+                    container.appendChild(titleEl);
+                    
+                    arrayOfDomNodes.push(container);
+                    
+                    return { domNodes: arrayOfDomNodes };
+                }
+            });
+
+            calendar.render();
         });
     </script>
 {% endblock %}

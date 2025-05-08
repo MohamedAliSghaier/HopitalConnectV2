@@ -54,4 +54,15 @@ public function findByPatientId(int $patientId): array
         ->getQuery()
         ->getResult();
 }
+
+// In RendezvousRepository.php
+public function findAllForCalendar()
+{
+    return $this->createQueryBuilder('r')
+        ->leftJoin('r.medecinId', 'm')
+        ->leftJoin('r.PatientId', 'p')
+        ->addSelect('m', 'p')
+        ->getQuery()
+        ->getResult();
+}
 }

@@ -47,7 +47,7 @@
             <div class="col-12">
                 <div class="bread-inner">
                     <ul class="bread-list">
-                        <li><a href="{{ path('rendezvous_list') }}">Appointments<i class="lni lni-arrow-right"></i></a></li>
+                        <li><a href="{{ path('rendezvous_listpatient') }}">Appointments<i class="lni lni-arrow-right"></i></a></li>
                         <li class="active"><a href="javascript:void(0)">Details</a></li>
                     </ul>
                 </div>
@@ -76,7 +76,7 @@
                         <h3 class="h4 mb-0">
                             <i class="lni lni-calendar me-2"></i>Appointment #{{ rendezvous.id }}
                         </h3>
-                        <a href="{{ path('rendezvous_list') }}" class="btn btn-sm btn-outline-secondary">
+                        <a href="{{ path('rendezvous_listpatient') }}" class="btn btn-sm btn-outline-secondary">
                             <i class="lni lni-arrow-left me-1"></i>Back to list
                         </a>
                     </div>

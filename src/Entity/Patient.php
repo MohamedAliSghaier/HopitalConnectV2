@@ -121,4 +121,14 @@ class Patient
     
             return $this;
         }
+
+        #[ORM\OneToOne(targetEntity: Utilisateur::class)]
+#[ORM\JoinColumn(name: "utilisateur_id", referencedColumnName: "id")]
+private ?Utilisateur $utilisateur = null;
+
+public function getUtilisateur(): ?Utilisateur
+{
+    return $this->utilisateur;
+}
+
 }

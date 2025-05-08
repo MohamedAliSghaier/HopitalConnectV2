@@ -11,103 +11,57 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Entity\Medecin;
+use App\Entity\Patient;
+use App\Entity\Utilisateur; 
+use Knp\Component\Pager\PaginatorInterface;
+     // Assure-toi que c'est bien cette interface
 
 class RendezvousController extends AbstractController
 {
-    #[Route('/rendezvous/details/{id}', name: 'rendezvous_details')]
-    public function showRendezVousDetails(RendezvousRepository $repository, $id): Response
-    {
-        $rendezvous = $repository->find($id);
-        return $this->render('rendez_vous/details.html.twig', [
-            'rendezvous' => $rendezvous,
-        ]);
-    }
+
 
     #[Route('/rendezvous/list', name: 'rendezvous_list')]
-    public function listRendezVous(RendezvousRepository $repository): Response
-    {
-        $rendezvousList = $repository->findAll();
-        return $this->render('rendez_vous/list.html.twig', [
-            'rendezvous_list' => $rendezvousList,
-        ]);
+public function listRendezVous( Request $request, RendezvousRepository $repository, PaginatorInterface $paginator): Response {
+    // Récupérer les paramètres de recherche
+    $date = $request->query->get('date');
+    $type = $request->query->get('type');
+
+    // Créer la requête de base
+    $queryBuilder = $repository->createQueryBuilder('r')
+        ->orderBy('r.date', 'DESC')
+        ->addOrderBy('r.start_time', 'ASC');
+
+    // Ajouter les filtres si présents
+    if ($date) {
+        $queryBuilder->andWhere('r.date = :date')
+           ->setParameter('date', new \DateTime($date));
     }
 
-    #[Route('/rendezvous/add', name: 'rendezvous_add')]
-    public function addRendezVous(ManagerRegistry $managerRegistry, Request $request): Response
-    {
-        $newRendezvous = new Rendezvous();
-        $form = $this->createForm(RendezvousType::class, $newRendezvous);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $managerRegistry->getManager();
-            $entityManager->persist($newRendezvous);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('rendezvous_list');
-        }
-
-        return $this->render('rendez_vous/add.html.twig', [
-            'form' => $form->createView(),
-        ]);
+    if ($type) {
+        $queryBuilder->andWhere('r.type_consultation_id = :type')
+           ->setParameter('type', $type);
     }
 
-    #[Route('/rendezvous/delete/{id}', name: 'rendezvous_delete')]
-    public function deleteRendezVous(RendezvousRepository $repository, ManagerRegistry $managerRegistry, $id): Response
-    {
-        $rendezvous = $repository->find($id);
-        $entityManager = $managerRegistry->getManager();
-        $entityManager->remove($rendezvous);
-        $entityManager->flush();
-        
-        return $this->redirectToRoute('rendezvous_list');
-    }
+    // Paginer les résultats
+    $pagination = $paginator->paginate(
+        $queryBuilder, // Requête QueryBuilder
+        $request->query->getInt('page', 1), // Numéro de page
+        10 // Nombre d'éléments par page
+    );
 
-    #[Route('/rendezvous/update/{id}', name: 'rendezvous_update')]
-    public function updateRendezVous(Request $request, RendezvousRepository $repository, ManagerRegistry $managerRegistry, $id): Response
-    {
-        $rendezvous = $repository->find($id);
-        if (!$rendezvous) {
-            throw $this->createNotFoundException('Rendezvous not found');
-        }
+    return $this->render('rendez_vous/list.html.twig', [
+        'pagination' => $pagination,
+        'search_date' => $date,
+        'search_type' => $type
+    ]);
+}
 
-        $form = $this->createForm(RendezvousType::class, $rendezvous);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $managerRegistry->getManager();
-            $entityManager->flush();
 
-            return $this->redirectToRoute('rendezvous_list');
-        }
 
-        return $this->render('rendez_vous/update.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
 
-    #[Route('/rendezvous/search', name: 'rendezvous_search')]
-    public function searchRendezVous(EntityManagerInterface $entityManager, Request $request, RendezvousRepository $repository): Response
-    {
-        $results = $repository->findAll();
-        
-        if ($request->isMethod('POST')) {
-            $searchTerm = $request->request->get('search_term');
-            
-            if ($searchTerm) {
-                $query = $entityManager->createQuery(
-                    "SELECT r
-                     FROM App\Entity\Rendezvous r
-                     WHERE r.date LIKE :searchTerm
-                        OR r.type_consultation_id LIKE :searchTerm"
-                );
-                $query->setParameter('searchTerm', '%' . $searchTerm . '%');
-                $results = $query->getResult();
-            }
-        }
-        
-        return $this->render('rendez_vous/search.html.twig', [
-            'rendezvous_list' => $results,
-        ]);
-    }
+
 }

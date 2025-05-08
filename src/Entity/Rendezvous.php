@@ -18,22 +18,25 @@ class Rendezvous
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\NotBlank(message: "La date est obligatoire")]
+    #[Assert\NotBlank(message: 'Vous devez remplir ce champ.')]
     #[Assert\Type("\DateTimeInterface", message: "La date doit être une date valide")]
     #[Assert\GreaterThanOrEqual("today", message: "La date ne peut pas être dans le passé")]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: "integer")]
-    #[Assert\NotBlank(message: "Le type de consultation est obligatoire")]
+    #[Assert\NotBlank(message: 'Vous devez remplir ce champ.')]
     #[Assert\Choice([1, 2], message: "Le type de consultation doit être 1 (Consultation) ou 2 (Téléconsultation)")]
     private int $type_consultation_id;
 
     #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "rendezvouss")]
     #[ORM\JoinColumn(name: 'PatientId', referencedColumnName: 'id', onDelete: 'CASCADE' )]
-    private Patient $PatientId;
+    private ?Patient $PatientId = null;  // Assurer que la valeur par défaut soit null
+
 
     #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: "rendezvouss")]
     #[ORM\JoinColumn(name: 'medecinId', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[Assert\NotBlank(message: 'Veuillez sélectionner un médecin.')]
+
     private Medecin $medecinId;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
@@ -43,6 +46,7 @@ class Rendezvous
 
     #[ORM\OneToMany(mappedBy: "id_patient", targetEntity: Analyse::class)]
     private Collection $analyses;
+    
 
     public function __construct()
     {
