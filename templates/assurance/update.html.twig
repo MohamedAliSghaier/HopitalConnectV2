@@ -1,0 +1,132 @@
+{# filepath: c:\Users\LENOVO\Downloads\PIsymfony-Ordonnance-Medicament\PIsymfony-Ordonnance-Medicament\templates\assurance\update.html.twig #}
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Modifier Assurance{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .assurance-form-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        max-width: 600px;
+        margin: 2rem auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .assurance-form-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #4a90e2;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: #333;
+    }
+
+    input, select, textarea {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        background-color: #4a90e2;
+        color: #fff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #357abd;
+    }
+
+    .btn-secondary {
+        background-color: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e2e2e2;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<br><br><br><br>
+
+
+<div class="assurance-form-card">
+    <h2 class="assurance-form-header">
+        <i class="fas fa-edit me-2"></i>Modifier Assurance
+    </h2>
+
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_row(form.NomAssureur, {'label': 'Nom de l\'assureur'}) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.TypeAssureur, {'label': 'Type d\'assureur'}) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.NumeroPolice, {'label': 'Numéro de police'}) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.NomTitulaire, {'label': 'Nom du titulaire'}) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.TypeCouverture, {'label': 'Type de couverture'}) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.dateDebut, {'label': 'Date de début'}) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(form.dateFin, {'label': 'Date de fin'}) }}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>enregistrer les modifications
+            </button>
+            <a href="{{ path('assurance_details', { id: assurance.id }) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>retour aux détails
+            </a>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

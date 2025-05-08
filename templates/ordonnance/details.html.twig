@@ -1,18 +1,30 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_internal.html.twig' %}
 
 {% block title %}Détails de l'Ordonnance{% endblock %}
 
 {% block body %}
-<div class="rv-card p-4">
-    <h1 class="h3 mb-4"><i class="fas fa-file-prescription me-2"></i>Détails de l'Ordonnance</h1>
-    <p><strong>Médecin :</strong> {{ ordonnance.medecin_id.nom }}</p>
-    <p><strong>Patient :</strong> {{ ordonnance.patient_id.nom }}</p>
-    <p><strong>Date de Prescription :</strong> {{ ordonnance.datePrescription ? ordonnance.datePrescription|date('d/m/Y H:i') : 'Non défini' }}</p>
-    <p><strong>Médicaments :</strong> {{ ordonnance.medicaments }}</p>
-    <p><strong>Instructions :</strong> {{ ordonnance.instructions }}</p>
-    <p><strong>Statut :</strong> {{ ordonnance.statut }}</p>
-    <a href="{{ path('ordonnance_list') }}" class="btn btn-outline-secondary mt-4">
-        <i class="fas fa-arrow-left me-2"></i>Retour à la liste
-    </a>
+<div class="content-container mt-100">
+    <div class="rv-card p-4">
+        <h1 class="h3 mb-4"><i class="fas fa-file-prescription me-2"></i>Détails de l'Ordonnance</h1>
+        <p><strong>Médecin :</strong> {{ ordonnance.medecin.id.nom }}</p> <!-- Access the Utilisateur's nom via Medecin -->
+        <p><strong>Patient :</strong> {{ ordonnance.patient.nom }}</p> <!-- Access the Patient's nom -->
+        <p><strong>Date de Prescription :</strong> {{ ordonnance.datePrescription ? ordonnance.datePrescription|date('d/m/Y H:i') : 'Non défini' }}</p>
+        
+        <p><strong>Médicaments :</strong></p>
+        <ul>
+            {% for medicament in ordonnance.medicaments %}
+                {% set parts = medicament|split(':') %}
+                <li>{{ parts[0] }} - Quantité : {{ parts[1] }}</li>
+            {% else %}
+                <li>Aucun médicament ajouté.</li>
+            {% endfor %}
+        </ul>
+
+        <p><strong>Instructions :</strong> {{ ordonnance.instructions }}</p>
+        <p><strong>Statut :</strong> {{ ordonnance.statut }}</p>
+        <a href="{{ path('ordonnance_list') }}" class="btn btn-outline-secondary mt-4">
+            <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+        </a>
+    </div>
 </div>
 {% endblock %}

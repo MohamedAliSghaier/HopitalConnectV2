@@ -1,0 +1,11 @@
+parameters:
+    twilio.account_sid: '%env(TWILIO_SID)%'
+    twilio.auth_token: '%env(TWILIO_TOKEN)%'
+    twilio.from_number: '%env(TWILIO_FROM)%'
+
+services:
+    App\Service\TwilioService:
+        arguments:
+            $sid: '%twilio.account_sid%'
+            $token: '%twilio.auth_token%'
+            $from: '%twilio.from_number%'

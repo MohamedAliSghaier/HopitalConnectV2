@@ -1,0 +1,137 @@
+{# JavaScript commun pour toutes les pages #}
+<script>
+(function () {
+    //===== Prealoder
+    window.addEventListener('load', function() {
+        window.setTimeout(fadeout, 500);
+    });
+
+    function fadeout() {
+        try {
+            const preloader = document.querySelector('.preloader');
+            if (preloader) {
+                preloader.style.opacity = '0';
+                preloader.style.display = 'none';
+            }
+        } catch (error) {
+            console.warn('Preloader element not found:', error);
+        }
+    }
+
+    /*=====================================
+    Sticky
+    ======================================= */
+    let scrollHandler = function() {
+        try {
+            // Gestion de la barre de navigation sticky
+            const header_navbar = document.querySelector(".navbar-area");
+            if (header_navbar) {
+                const sticky = header_navbar.offsetTop;
+                if (window.pageYOffset > sticky) {
+                    header_navbar.classList.add("sticky");
+                } else {
+                    header_navbar.classList.remove("sticky");
+                }
+            }
+
+            // Gestion du bouton de retour en haut
+            const backToTo = document.querySelector(".scroll-top");
+            if (backToTo) {
+                if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                    backToTo.style.display = "flex";
+                } else {
+                    backToTo.style.display = "none";
+                }
+            }
+        } catch (error) {
+            console.warn('Error in scroll handler:', error);
+        }
+    };
+
+    // Utiliser requestAnimationFrame pour optimiser les performances
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                scrollHandler();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // WOW active
+    try {
+        if (typeof WOW !== 'undefined') {
+            new WOW().init();
+        }
+    } catch (error) {
+        console.warn('WOW.js not loaded:', error);
+    }
+
+    // Portfolio filtering
+    try {
+        const filterButtons = document.querySelectorAll('.portfolio-btn-wrapper button');
+        if (filterButtons.length > 0) {
+            filterButtons.forEach(button => 
+                button.addEventListener('click', (event) => {
+                    const filterValue = event.target.getAttribute('data-filter');
+                    if (typeof iso !== 'undefined') {
+                        iso.arrange({
+                            filter: filterValue
+                        });
+                    }
+                })
+            );
+        }
+
+        const portfolioButtons = document.getElementsByClassName("portfolio-btn");
+        if (portfolioButtons.length > 0) {
+            Array.from(portfolioButtons).forEach(button => {
+                button.addEventListener('click', function() {
+                    Array.from(portfolioButtons).forEach(btn => btn.classList.remove("active"));
+                    this.classList.add("active");
+                });
+            });
+        }
+    } catch (error) {
+        console.warn('Error in portfolio filtering:', error);
+    }
+
+    // Smooth scrolling for menu items
+    try {
+        const pageLinks = document.querySelectorAll('.page-scroll');
+        if (pageLinks.length > 0) {
+            pageLinks.forEach(elem => {
+                elem.addEventListener('click', e => {
+                    e.preventDefault();
+                    const targetId = elem.getAttribute('href');
+                    if (!targetId) return;
+                    
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+    } catch (error) {
+        console.warn('Error in smooth scroll:', error);
+    }
+
+    // Mobile menu button
+    try {
+        const navbarToggler = document.querySelector(".mobile-menu-btn");
+        if (navbarToggler) {
+            navbarToggler.addEventListener('click', function () {
+                navbarToggler.classList.toggle("active");
+            });
+        }
+    } catch (error) {
+        console.warn('Error in mobile menu:', error);
+    }
+
+})();</script> 

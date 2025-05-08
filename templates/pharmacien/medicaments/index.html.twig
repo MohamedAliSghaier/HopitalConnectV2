@@ -1,0 +1,30 @@
+{% extends 'base_pharmacien.html.twig' %}
+
+
+{% block title %}Medicaments{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+<h1>Medicaments</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Stock</th>
+            <th>Pharmacien</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for medicament in medicaments %}
+            <tr>
+                <td>{{ medicament.id }}</td>
+                <td>{{ medicament.nom }}</td>
+                <td>{{ medicament.stock }}</td>
+                <td>{{ medicament.pharmacien ? medicament.pharmacien.nom : 'None' }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

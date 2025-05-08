@@ -1,0 +1,17 @@
+{% extends 'base_pharmacien.html.twig' %}
+
+
+{% block title %}Modifier un Médicament{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <h1>Modifier un Médicament</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-primary">Modifier</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('pharmacien_medicaments_list') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+</div>
+{% endblock %}

@@ -3,10 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Medicament;
-use App\Entity\Pharmacien;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MedicamentType extends AbstractType
@@ -14,14 +14,12 @@ class MedicamentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            //->add('id')
-            ->add('nom')
-            ->add('stock');
-            //->add('pharmacien', EntityType::class, [
-                //'class' => Pharmacien::class,
-                //'choice_label' => 'nom', // ou 'email', selon ce que tu veux afficher
-           // ]);
-            
+            ->add('nom', TextType::class, [
+                'label' => 'Nom du Médicament',
+            ])
+            ->add('stock', IntegerType::class, [
+                'label' => 'Stock',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

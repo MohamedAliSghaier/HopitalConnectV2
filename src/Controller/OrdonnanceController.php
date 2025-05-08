@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Controller;
+use Symfony\Component\Security\Core\Security;
 
 use App\Entity\Ordonnance;
+use App\Entity\Medecin; // Add this line to import the Medecin entity
 use App\Form\OrdonnanceType;
 use App\Repository\OrdonnanceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,37 +26,68 @@ class OrdonnanceController extends AbstractController
     }
 
     #[Route('/ordonnance/list', name: 'ordonnance_list')]
-    public function listOrdonnances(OrdonnanceRepository $repository): Response
+    public function listOrdonnances(Security $security, OrdonnanceRepository $repository): Response
     {
-        $ordonnances = $repository->findAll();
+        // Get the logged-in user
+        $user = $security->getUser();
+
+        // Ensure the user is a doctor
+        if (!$user || !$user->getRole() === 'medecin') {
+            $this->addFlash('error', 'Vous devez être connecté en tant que médecin pour voir cette liste.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Fetch ordonnances created by the logged-in doctor
+        $ordonnanceList = $repository->findBy(['medecin' => $user]);
+
         return $this->render('ordonnance/list.html.twig', [
-            'ordonnance_list' => $ordonnances,
+            'ordonnance_list' => $ordonnanceList,
         ]);
     }
 
     #[Route('/ordonnance/add', name: 'ordonnance_add')]
-    public function addOrdonnance(ManagerRegistry $managerRegistry, Request $request): Response
+    public function addOrdonnance(Security $security, EntityManagerInterface $entityManager, Request $request): Response
     {
         $ordonnance = new Ordonnance();
+
+        // Get the logged-in user
+        $user = $security->getUser();
+
+        // Ensure the logged-in user is a doctor
+        $medecin = $entityManager->getRepository(Medecin::class)->findOneBy(['id' => $user]);
+        if (!$medecin) {
+            $this->addFlash('error', 'Vous devez être connecté en tant que médecin pour ajouter une ordonnance.');
+            return $this->redirectToRoute('ordonnance_list');
+        }
+
+        // Set the Medecin in the Ordonnance
+        $ordonnance->setMedecin($medecin);
+
+        // Create the form
         $form = $this->createForm(OrdonnanceType::class, $ordonnance);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && !$form->isValid()) {
-            // Errors will be passed to the template
-        }
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $managerRegistry->getManager();
+
+            // Process the medicaments field
+            $medicaments = $form->get('medicaments')->getData();
+            $processedMedicaments = [];
+            foreach ($medicaments as $medicament) {
+                $processedMedicaments[] = sprintf('%s:%d', $medicament['nom'], $medicament['quantite']);
+            }
+            $ordonnance->setMedicaments($processedMedicaments);
+
             $entityManager->persist($ordonnance);
             $entityManager->flush();
 
             $this->addFlash('success', 'Ordonnance ajoutée avec succès.');
-
             return $this->redirectToRoute('ordonnance_list');
         }
 
+// Pass the doctor's name to the template
         return $this->render('ordonnance/add.html.twig', [
             'form' => $form->createView(),
+            'nomMedecinConnecte' => $medecin->getId()->getNom(), // Assuming Medecin->getId() returns a Utilisateur
         ]);
     }
 
@@ -70,7 +103,7 @@ class OrdonnanceController extends AbstractController
     }
 
     #[Route('/ordonnance/update/{id}', name: 'ordonnance_update')]
-    public function updateOrdonnance(Request $request, OrdonnanceRepository $repository, ManagerRegistry $managerRegistry, $id): Response
+    public function updateOrdonnance(Request $request, OrdonnanceRepository $repository, EntityManagerInterface $entityManager, $id): Response
     {
         $ordonnance = $repository->find($id);
         if (!$ordonnance) {
@@ -81,7 +114,24 @@ class OrdonnanceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $managerRegistry->getManager()->flush();
+            // Process the medicaments field
+            $medicaments = $form->get('medicaments')->getData();
+            $processedMedicaments = [];
+
+            foreach ($medicaments as $medicament) {
+                // Split the string into "nom" and "quantite"
+                $parts = explode(':', $medicament);
+                if (count($parts) === 2) {
+                    $nom = trim($parts[0]);
+                    $quantite = (int) trim($parts[1]);
+                    $processedMedicaments[] = sprintf('%s:%d', $nom, $quantite);
+                }
+            }
+
+            $ordonnance->setMedicaments($processedMedicaments);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Ordonnance mise à jour avec succès.');
             return $this->redirectToRoute('ordonnance_list');
         }
 
@@ -109,6 +159,26 @@ class OrdonnanceController extends AbstractController
 
         return $this->render('ordonnance/search.html.twig', [
             'ordonnance_list' => $results,
+        ]);
+    }
+
+    #[Route('/ordonnance/my', name: 'ordonnance_my')]
+    public function myOrdonnances(Security $security, OrdonnanceRepository $repository): Response
+    {
+        // Get the logged-in user
+        $user = $security->getUser();
+
+        // Ensure the user is a patient
+        if (!$user || !$user->getRole() === 'patient') {
+            $this->addFlash('error', 'Vous devez être connecté en tant que patient pour voir vos ordonnances.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Fetch ordonnances for the logged-in patient
+        $ordonnances = $repository->findBy(['patient' => $user]);
+
+        return $this->render('ordonnance/my.html.twig', [
+            'ordonnances' => $ordonnances,
         ]);
     }
 }

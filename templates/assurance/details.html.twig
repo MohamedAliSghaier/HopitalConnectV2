@@ -1,0 +1,133 @@
+{# filepath: c:\Users\LENOVO\Downloads\PIsymfony-Ordonnance-Medicament\PIsymfony-Ordonnance-Medicament\templates\assurance\details.html.twig #}
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Détails de l'Assurance{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .details-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        max-width: 700px;
+        margin: 2rem auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .details-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #4a90e2;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .details-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+    }
+
+    .details-table th {
+        text-align: left;
+        padding: 0.75rem;
+        background: #f5f5f5;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .details-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .details-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        background-color: #4a90e2;
+        color: #fff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #357abd;
+    }
+
+    .btn-secondary {
+        background-color: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e2e2e2;
+    }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        color: #fff;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #c0392b;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<br> <br> <br> <br> <br> <br> 
+<div class="details-card">
+    <h2 class="details-header">Détails de l'Assurance</h2>
+
+    <table class="details-table">
+        <tr>
+            <th>Nom de l'assureur :</th>
+            <td>{{ assurance.NomAssureur }}</td>
+        </tr>
+        <tr>
+            <th>Type d'assureur :</th>
+            <td>{{ assurance.TypeAssureur }}</td>
+        </tr>
+        <tr>
+            <th>Numéro de police :</th>
+            <td>{{ assurance.NumeroPolice }}</td>
+        </tr>
+        <tr>
+            <th>Nom du titulaire :</th>
+            <td>{{ assurance.NomTitulaire }}</td>
+        </tr>
+        <tr>
+            <th>Type de couverture :</th>
+            <td>{{ assurance.TypeCouverture }}</td>
+        </tr>
+        <tr>
+            <th>Date de début :</th>
+            <td>{{ assurance.dateDebut|date('Y-m-d') }}</td>
+        </tr>
+        <tr>
+            <th>Date de fin :</th>
+            <td>{{ assurance.dateFin|date('Y-m-d') }}</td>
+        </tr>
+    </table>
+
+    <div class="details-actions">
+        <a href="{{ path('assurance_list') }}" class="btn btn-secondary">Retour à la liste</a>
+        <a href="{{ path('assurance_update', { id: assurance.id }) }}" class="btn btn-primary">Modifier</a>
+        <a href="{{ path('assurance_delete', { id: assurance.id }) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette assurance ?');">Supprimer</a>
+    </div>
+</div>
+{% endblock %}

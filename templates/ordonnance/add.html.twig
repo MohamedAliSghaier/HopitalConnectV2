@@ -1,6 +1,6 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_internal.html.twig' %}
 
-{% block title %}{{ 'add' in app.request.attributes.get('_route') ? 'Nouvelle' : 'Modifier' }} Ordonnance{% endblock %}
+{% block title %}Ajouter Ordonnance{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
@@ -43,10 +43,11 @@
 {% endblock %}
 
 {% block body %}
+<div class="content-container mt-100">
 <div class="rv-form-card">
     <h2 class="h4 rv-form-header">
         <i class="fas fa-{{ 'add' in app.request.attributes.get('_route') ? 'plus' : 'edit' }} me-2"></i>
-        {{ 'add' in app.request.attributes.get('_route') ? 'Nouvelle' : 'Modifier' }} Ordonnance
+        {{ 'add' in app.request.attributes.get('_route') ? 'Nouvelle' : 'Ajouter' }} Ordonnance
     </h2>
 
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
@@ -58,34 +59,39 @@
     {% endif %}
     
     <div class="mb-4">
-        {{ form_label(form.medecin_id) }}
-        {{ form_widget(form.medecin_id, {'attr': {'class': 'form-input'}}) }}
-        {% if form.medecin_id.vars.errors|length > 0 %}
+        <p>Médecin connecté : <strong>{{ nomMedecinConnecte }}</strong></p>
+    </div>
+
+    
+
+
+    <div class="mb-4">
+        {{ form_label(form.patient) }}
+        {{ form_widget(form.patient, {'attr': {'class': 'form-input'}}) }}
+        {% if form.patient.vars.errors|length > 0 %}
             <div class="form-error">
-                {{ form_errors(form.medecin_id) }}
+                {{ form_errors(form.patient) }}
             </div>
         {% endif %}
     </div>
 
     <div class="mb-4">
-        {{ form_label(form.patient_id) }}
-        {{ form_widget(form.patient_id, {'attr': {'class': 'form-input'}}) }}
-        {% if form.patient_id.vars.errors|length > 0 %}
-            <div class="form-error">
-                {{ form_errors(form.patient_id) }}
-            </div>
-        {% endif %}
+        <h3>Médicaments</h3>
+        <div id="medicaments-container" data-prototype="{{ form_widget(form.medicaments.vars.prototype)|e('html_attr') }}">
+            {{ form_widget(form.medicaments) }}
+        </div>
+        <button type="button" id="add-medicament" class="btn btn-secondary mt-2">Ajouter un médicament</button>
     </div>
 
-    <div class="mb-4">
-        {{ form_label(form.medicaments) }}
-        {{ form_widget(form.medicaments, {'attr': {'class': 'form-input'}}) }}
-        {% if form.medicaments.vars.errors|length > 0 %}
-            <div class="form-error">
-                {{ form_errors(form.medicaments) }}
-            </div>
-        {% endif %}
-    </div>
+    <script>
+        document.getElementById('add-medicament').addEventListener('click', function () {
+            const container = document.getElementById('medicaments-container');
+            const prototype = container.dataset.prototype;
+            const index = container.children.length;
+            const newForm = prototype.replace(/__name__/g, index);
+            container.insertAdjacentHTML('beforeend', newForm);
+        });
+    </script>
 
     <div class="mb-4">
         {{ form_label(form.date_prescription) }}

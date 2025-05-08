@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>{% block title %}Pharmacien Dashboard{% endblock %}</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/images/favicon.svg') }}" />
+
+    {% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/LineIcons.2.0.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/tiny-slider.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/glightbox.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
+    {% endblock %}
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-light shadow-sm p-3">
+            <h5 class="text-primary mb-4">Menu Pharmacien</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a href="{{ path('pharmacien_ordonnances') }}" class="nav-link">
+                        <i class="fas fa-list me-2"></i>Liste des Ordonnances
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ path('pharmacien_medicaments_list') }}" class="nav-link">
+                        <i class="fas fa-boxes me-2"></i>Gérer le Stock
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ path('app_logout') }}" class="nav-link">
+                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="content flex-grow-1 p-4">
+            {% block body %}
+            <!-- Custom body content for pharmacien pages -->
+            {% endblock %}
+        </div>
+    </div>
+
+    {% block js %}
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/wow.min.js') }}"></script>
+    <script src="{{ asset('assets/js/tiny-slider.js') }}"></script>
+    <script src="{{ asset('assets/js/glightbox.min.js') }}"></script>
+    <script src="{{ asset('assets/js/count-up.min.js') }}"></script>
+    <script src="{{ asset('assets/js/imagesloaded.min.js') }}"></script>
+    <script src="{{ asset('assets/js/isotope.min.js') }}"></script>
+    {% endblock %}
+</body>
+
+</html>

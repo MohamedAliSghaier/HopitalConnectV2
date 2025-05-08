@@ -1,0 +1,23 @@
+<ul id="nav" class="navbar-nav ms-auto">
+    <li class="nav-item">
+        <a class="page-scroll active" href="{{ path('app_home') }}">Accueil</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('medicament_details', {'id': 1}) }}" aria-label="Toggle navigation">Médicaments</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('rendezvous_list') }}" aria-label="Toggle navigation">Rendez-vous</a>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="dropdown-toggle" href="#" id="dossierDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dossier Médical
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="dossierDropdown">
+            <li><a class="dropdown-item" href="{{ path('dossiermedicale_add') }}">Informations Générales</a></li>
+            <li><a class="dropdown-item" href="{{ path('assurance_add') }}">Assurance</a></li>
+        </ul>
+    </li>
+</ul>
+<div class="button add-list-button">
+    <a href="{{ path('rendezvous_add') }}" class="btn">Prendre Rendez-vous</a>
+</div> 

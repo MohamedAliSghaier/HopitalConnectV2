@@ -1,0 +1,43 @@
+{% extends 'base_patient.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/chatbot.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/chatbot.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+
+
+<br>
+<br><br>
+<br><br>
+
+
+<h1>Welcome, {{ patientName }}!</h1>
+
+<!-- Bouton de déconnexion -->
+<div style="margin-top: 20px;">
+    <a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a>
+</div>
+
+
+
+<!-- Link to add assurance --> 
+<div class="actions" style="margin-top: 20px;">
+    <a href="{{ path('assurance_add') }}" class="btn btn-primary">Ajouter Assurance</a>
+</div>
+
+<!-- Link to add dossier medicale -->
+<div class="actions" style="margin-top: 20px;">
+    <a href="{{ path('dossiermedicale_add') }}" class="btn btn-primary">Ajouter un Dossier Médical</a>
+</div>
+
+<br>
+<br>
+
+{% endblock %}

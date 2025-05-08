@@ -22,3 +22,14 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\Service\TwilioService:
+        arguments:
+            $sid: '%env(TWILIO_SID)%'
+            $token: '%env(TWILIO_TOKEN)%'
+            $from: '%env(TWILIO_FROM)%'
+
+    # explicitly configure the QrCodeService
+    App\Service\QrCodeService:
+        public: true
+        arguments:
+            $params: '@parameter_bag'
