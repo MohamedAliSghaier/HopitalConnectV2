@@ -1,0 +1,143 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="content-container mt-100">
+    <div class="rv-card p-4 shadow-sm rounded">
+        <h1 class="h3 text-primary mb-4">Statistiques</h1>
+
+        <h2 class="h5">Statistiques par rôle</h2>
+        <ul>
+            {% for role, count in rolesStats %}
+                <li>{{ role }} : {{ count }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2 class="h5 mt-4">Statistiques par genre</h2>
+        <ul>
+            {% for genre, count in genreStats %}
+                <li>{{ genre }} : {{ count }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2 class="h5 mt-4">Diagramme circulaire des rôles</h2>
+        <canvas id="rolesChart" width="400" height="200"></canvas>
+
+        <h2 class="h5 mt-4">Diagramme à barres des genres</h2>
+        <canvas id="genreChart" width="400" height="200"></canvas>
+
+        <h2 class="h5 mt-5">Liste des Utilisateurs</h2>
+        <form method="get" class="mb-3">
+            <input type="text" name="search" value="{{ search }}" placeholder="Rechercher par nom" class="form-control mb-2">
+            <button type="submit" class="btn btn-primary btn-sm">Rechercher</button>
+        </form>
+
+        <a href="{{ path('admin_statistiques', { sort: 'nom' }) }}" class="btn btn-secondary btn-sm">Trier par Nom</a>
+        <a href="{{ path('admin_statistiques', { sort: 'id' }) }}" class="btn btn-secondary btn-sm">Trier par ID</a>
+
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Mot_De_Passe</th>
+                    <th>Rôle</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.id }}</td>
+                        <td>{{ utilisateur.nom }}</td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td>{{ utilisateur.mot_de_passe }}</td>
+                        <td>{{ utilisateur.roles|join(', ') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Extract values for rolesChart
+        const rolesDataValues = [];
+        const rolesLabels = {{ rolesStats|keys|json_encode()|raw }};
+        const rolesStatsData = {{ rolesStats|json_encode()|raw }};
+        let totalRoles = 0;
+        for (const role in rolesStatsData) {
+            if (rolesStatsData.hasOwnProperty(role)) {
+                rolesDataValues.push(rolesStatsData[role]);
+                totalRoles += rolesStatsData[role];
+            }
+        }
+
+        const rolesData = {
+            labels: rolesLabels.map(label => {
+                const count = rolesStatsData[label];
+                const percentage = ((count / totalRoles) * 100).toFixed(1);
+                return `${label} (${percentage}%, ${count})`;
+            }),
+            datasets: [{
+                data: rolesDataValues,
+                backgroundColor: ['#007bff', '#28a745', '#dc3545', '#ffc107', '#6f42c1']
+            }]
+        };
+
+        // Genre Chart (Bar Chart)
+        const genreLabels = {{ genreStats|keys|json_encode()|raw }};
+        const genreDataValues = [];
+        for (const genre in {{ genreStats|json_encode()|raw }}) {
+            if ({{ genreStats|json_encode()|raw }}.hasOwnProperty(genre)) {
+                genreDataValues.push({{ genreStats|json_encode()|raw }}[genre]);
+            }
+        }
+
+        const genreData = {
+            labels: genreLabels,
+            datasets: [{
+                label: 'Nombre d\'utilisateurs',
+                data: genreDataValues,
+                backgroundColor: ['#17a2b8', '#fd7e14', '#6c757d']
+            }]
+        };
+
+        new Chart(document.getElementById('rolesChart'), {
+            type: 'pie',
+            data: rolesData,
+             options: {
+                plugins: {
+                    tooltip: {
+                        enabled: false
+                    },
+                    datalabels: {
+                        formatter: (value, context) => {
+                            let sum = 0;
+                            let dataArr = context.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            let percentage = (value*100 / sum).toFixed(2)+"%";
+                            return percentage;
+                        },
+                        color: '#fff',
+                    }
+                }
+            },
+        });
+
+        new Chart(document.getElementById('genreChart'), {
+            type: 'bar',
+            data: genreData,
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+{% endblock %}

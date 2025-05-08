@@ -1,0 +1,17 @@
+templates\reset_password\request.html.twig -->
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Réinitialisation du mot de passe{% endblock %}
+
+{% block body %}
+    <h1>Réinitialisation du mot de passe</h1>
+
+    {{ form_start(requestForm) }}
+        <div class="mb-3">
+            {{ form_label(requestForm.email) }}
+            {{ form_widget(requestForm.email, { 'attr': {'class': 'form-control'} }) }}
+            {{ form_errors(requestForm.email) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+    {{ form_end(requestForm) }}
+{% endblock %}

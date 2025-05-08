@@ -1,0 +1,53 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Liste des Utilisateurs{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-card p-4 shadow-sm rounded">
+        <h1 class="h3 text-primary mb-4">Liste des Utilisateurs</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Email</th>
+                    <th>Mot_De_Passe</th>
+                    <th>Genre</th>
+                    <th>Photo</th>
+                    <th>Rôle</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.id }}</td>
+                        <td>{{ utilisateur.nom }}</td>
+                        <td>{{ utilisateur.prenom }}</td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td>{{ utilisateur.mot_de_passe }}</td>
+                        <td>{{ utilisateur.genre }}</td>
+                        <td>
+                            {% if utilisateur.photo %}
+                            <img src="{{ asset('uploads/photos/' ~ utilisateur.photo) }}" class="img-thumbnail" width="150" height="150">
+                            {% else %}
+                                <span class="text-muted">Aucune photo</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ utilisateur.roles|join(', ') }}</td>
+                        <td>
+                            <a href="{{ path('admin_utilisateurs_edit', { id: utilisateur.id }) }}" class="btn btn-sm btn-primary">Modifier</a>
+                            <form method="post" action="{{ path('admin_utilisateurs_delete', { id: utilisateur.id }) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                                <button class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

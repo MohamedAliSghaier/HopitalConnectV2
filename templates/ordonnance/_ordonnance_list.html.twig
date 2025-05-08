@@ -1,0 +1,34 @@
+{% for ordonnance in ordonnance_list %}
+<tr>
+    <td>{{ ordonnance.medecin.utilisateur.nom }}</td>
+    <td>{{ ordonnance.patient.nom }}</td>
+    <td>{{ ordonnance.datePrescription|date('d/m/Y') }}</td>
+    <td>{{ ordonnance.statut }}</td>
+    <td>
+        <div class="d-flex gap-2">
+            <a href="{{ path('ordonnance_details', {'id': ordonnance.id}) }}" 
+               class="btn btn-sm btn-outline-primary">
+               <i class="fas fa-file-medical"></i>
+            </a>
+            <a href="{{ path('ordonnance_update', {'id': ordonnance.id}) }}" 
+               class="btn btn-outline-warning btn-sm">
+               <i class="fas fa-edit"></i>
+            </a>
+            <a href="{{ path('ordonnance_delete', {'id': ordonnance.id}) }}" 
+               class="btn btn-sm btn-outline-danger" 
+               onclick="return confirm('Supprimer cette ordonnance ?')">
+               <i class="fas fa-trash"></i>
+            </a>
+            <a href="{{ path('ordonnance_pdf', {'id': ordonnance.id}) }}" 
+               class="btn btn-success btn-sm" 
+               target="_blank">
+               📄
+            </a>
+        </div>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="5" class="text-center text-muted py-4">Aucune ordonnance trouvée</td>
+</tr>
+{% endfor %} 

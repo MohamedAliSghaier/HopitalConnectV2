@@ -1,0 +1,49 @@
+{% for assurance in assurance_list %}
+<div class="assurance-card">
+    <h5>Assurance: {{ assurance.NomAssureur }}</h5>
+
+    <div class="assurance-field">
+        <label>Type d'assureur:</label>
+        <span>{{ assurance.TypeAssureur }}</span>
+    </div>
+
+    <div class="assurance-field">
+        <label>Numéro de police:</label>
+        <span>{{ assurance.NumeroPolice }}</span>
+    </div>
+
+    <div class="assurance-field">
+        <label>Nom du titulaire:</label>
+        <span>{{ assurance.NomTitulaire }}</span>
+    </div>
+
+    <div class="assurance-field">
+        <label>Type de couverture:</label>
+        <span>{{ assurance.TypeCouverture }}</span>
+    </div>
+
+    <div class="assurance-field">
+        <label>Date de début:</label>
+        <span>{{ assurance.dateDebut|date('Y-m-d') }}</span>
+    </div>
+
+    <div class="assurance-field">
+        <label>Date de fin:</label>
+        <span>{{ assurance.dateFin|date('Y-m-d') }}</span>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ path('assurance_details', { id: assurance.id }) }}" class="btn btn-info">
+            <i class="fas fa-eye me-2"></i>Détails
+        </a>
+        <a href="{{ path('assurance_update', { id: assurance.id }) }}" class="btn btn-primary">
+            <i class="fas fa-edit me-2"></i>Modifier
+        </a>
+        <a href="{{ path('assurance_delete', { id: assurance.id }) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette assurance ?');">
+            <i class="fas fa-trash me-2"></i>Supprimer
+        </a>
+    </div>
+</div>
+{% else %}
+<div class="text-center text-muted py-4">Aucune assurance trouvée</div>
+{% endfor %} 

@@ -1,0 +1,48 @@
+{% extends 'base_internal.html.twig' %}
+
+
+{% block title %}Ajouter un Médicament{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <h1>Ajouter un Médicament</h1>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {% if form.vars.errors|length > 0 %}
+        <div class="form-error mb-4">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+    
+    <div class="mb-4">
+        {{ form_label(form.nom) }}
+        {{ form_widget(form.nom, {'attr': {'class': 'form-input'}}) }}
+        {% if form.nom.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.nom) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.stock) }}
+        {{ form_widget(form.stock, {'attr': {'class': 'form-input'}}) }}
+        {% if form.stock.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.stock) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="d-flex justify-content-end gap-3 mt-4">
+        <button type="submit" class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i>Enregistrer
+    
+    </div>
+
+    {{ form_end(form) }}
+
+    <a href="{{ path('pharmacien_medicaments_list') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+</div>
+{% endblock %}

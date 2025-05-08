@@ -1,0 +1,94 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Ajouter un Utilisateur{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-card p-4 shadow-sm rounded">
+        <h1 class="h3 text-primary mb-4">Ajouter un Utilisateur</h1>
+        {{ form_start(form) }}
+            <div class="mb-3">
+                {{ form_label(form.nom) }}
+                {{ form_widget(form.nom, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.nom) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.prenom) }}
+                {{ form_widget(form.prenom, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.prenom) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.email) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.role) }}
+                {{ form_widget(form.role, { 'attr': {'class': 'form-select role-selector'} }) }}
+                {{ form_errors(form.role) }}
+                
+            </div>
+          
+            <div class="mb-3">
+                {{ form_label(form.password.first) }}
+                {{ form_widget(form.password.first, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.password.first) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.password.second) }}
+                {{ form_widget(form.password.second, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.password.second) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.genre) }}
+                {{ form_widget(form.genre, { 'attr': {'class': 'form-select'} }) }}
+                {{ form_errors(form.genre) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.photo) }}
+                {{ form_widget(form.photo, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.photo) }}
+                <small class="form-text text-muted">Formats acceptés: JPEG, PNG (max 2Mo)</small>
+            </div>
+            <div class="mb-3 specialite-field" style="display: none;">
+                {{ form_label(form.specialite) }}
+                {{ form_widget(form.specialite, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.specialite) }}
+            </div>
+            
+            <div class="mb-3 num-rdv-max-field" style="display: none;">
+                {{ form_label(form.num_rdv_max) }}
+                {{ form_widget(form.num_rdv_max, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.num_rdv_max) }}
+            </div>
+            <button type="submit" class="btn btn-success mt-3">Créer</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roleSelector = document.querySelector('.role-selector');
+    const specialiteContainer = document.querySelector('.specialite-field');
+    const numRdvMaxContainer = document.querySelector('.num-rdv-max-field');
+
+    function toggleMedecinFields() {
+        if (roleSelector.value === 'medecin') {
+            specialiteContainer.style.display = 'block';
+            numRdvMaxContainer.style.display = 'block';
+        } else {
+            specialiteContainer.style.display = 'none';
+            numRdvMaxContainer.style.display = 'none';
+        }
+    }
+
+    // Initialisation au chargement
+    toggleMedecinFields();
+
+    // Écouteur du changement de sélection
+    roleSelector.addEventListener('change', toggleMedecinFields);
+});
+</script>
+{% endblock %}
+

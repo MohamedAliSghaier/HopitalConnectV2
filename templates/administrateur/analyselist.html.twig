@@ -1,0 +1,60 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Analyses List{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Analyses List</h1>
+    
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>RendezVous</th>
+                        <th>Patient</th>
+                        <th>Medecin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for analyse in analyses %}
+                    <tr>
+                        <td>{{ analyse.date|date('Y-m-d') }}</td>
+                        <td>{{ analyse.type }}</td>
+                        <td>
+                            {% if analyse.RendezVous %}
+                                <a href="{{ path('rendezvous_details', {'id': analyse.RendezVous.id}) }}">
+                                    RendezVous #{{ analyse.RendezVous.id }}
+                                </a>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if analyse.patient %}
+                                {{ analyse.patient.nom }} {{ analyse.patient.prenom }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if analyse.medecin %}
+                                {{ analyse.medecin.nom }} {{ analyse.medecin.prenom }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">No analyses found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

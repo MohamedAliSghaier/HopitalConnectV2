@@ -1,0 +1,39 @@
+security:
+    password_hashers:
+        App\Entity\Utilisateur:
+            algorithm: plaintext
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\Utilisateur
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            lazy: true
+            provider: app_user_provider
+        
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                csrf_token_id: authenticate
+                default_target_path: app_login
+                
+            logout:
+                path: app_logout
+                target: app_login
+
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMINISTRATEUR }
+        - { path: ^/medecin, roles: ROLE_MEDECIN }
+        - { path: ^/patient, roles: ROLE_PATIENT }
+        - { path: ^/pharmacien, roles: ROLE_PHARMACIEN }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: PUBLIC_ACCESS }

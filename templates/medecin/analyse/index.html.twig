@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Analysis Details{% endblock %}
+
+{% block body %}
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h2 class="wow fadeInUp" data-wow-delay=".4s">
+                        <i class="lni lni-file"></i> Analysis Details
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card wow fadeInUp" data-wow-delay=".6s">
+            <div class="card-body">
+                <div class="medical-details">
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="lni lni-calendar"></i> Date:</span>
+                        <span class="detail-value">{{ analyse.date|date('Y-m-d H:i') }}</span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="lni lni-lab"></i> Type:</span>
+                        <span class="detail-value">{{ analyse.type }}</span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="lni lni-sthethoscope"></i> Associated Appointment:</span>
+                        <span class="detail-value">
+                            {% if analyse.RendezVous %}
+                                <a href="{{ path('rendezvous_details', {'id': analyse.RendezVous.id}) }}" class="medical-link">
+                                    Appointment #{{ analyse.RendezVous.id }} ({{ analyse.RendezVous.date|date('Y-m-d') }})
+                                </a>
+                            {% else %}
+                                <span class="text-muted">None</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="button-group mt-4">
+                    <a href="{{ path('analyse_list') }}" class="btn btn-secondary">
+                        <i class="lni lni-arrow-left"></i> Back to List
+                    </a>
+                    {% if app.request.attributes.get('_route') != 'analyse_add' %}
+                        <a href="{{ path('analyse_edit', {'id': analyse.id}) }}" class="btn btn-primary">
+                            <i class="lni lni-pencil"></i> Edit
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

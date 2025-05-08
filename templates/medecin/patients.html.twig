@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Patients{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Mes Patients</h1>
+
+    {# Search Form #}
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="get" class="form-inline">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Rechercher un patient..." value="{{ search_query }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i> Rechercher
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {# Patients List #}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                         
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if patients is empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">Aucun patient trouvé</td>
+                            </tr>
+                        {% else %}
+                            {% for patient in patients %}
+                                <tr>
+                                    <td>{{ patient.getUtilisateur().getNom() }}</td>
+                                    <td>{{ patient.getUtilisateur().getPrenom() }}</td>
+                                    <td>{{ patient.getUtilisateur().getEmail() }}</td>
+                            
+                                    <td>
+                                        <a href="{{ path('medecin_patient_details', {'id': patient.id}) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i> Détails
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

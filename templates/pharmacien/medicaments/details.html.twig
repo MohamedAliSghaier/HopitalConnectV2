@@ -1,0 +1,19 @@
+{% extends 'base_internal.html.twig' %}
+
+
+{% block title %}Détails du Médicament{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <h1>Détails du Médicament</h1>
+
+    <ul>
+        <li><strong>Nom :</strong> {{ medicament.nom }}</li>
+        <li><strong>Description :</strong> {{ medicament.description }}</li>
+        <li><strong>Prix :</strong> {{ medicament.prix }}</li>
+        <li><strong>Quantité :</strong> {{ medicament.quantite }}</li>
+    </ul>
+
+    <a href="{{ path('pharmacien_medicament_list') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+</div>
+{% endblock %}

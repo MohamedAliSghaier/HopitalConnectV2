@@ -1,0 +1,57 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    photos_directory: '%kernel.project_dir%/public/uploads/photos'
+   
+    recaptcha.secret_key: '%env(RECAPTCHA_SECRET_KEY)%'  # Add reCAPTCHA secret key
+    known_faces_directory: '%kernel.project_dir%/public/uploads/faces'  # Add this parameter if necessary
+
+services:
+    
+    
+    # Default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    
+    # Doctrine configuration for EnumType
+    App\Doctrine\DBAL\Types\EnumType:
+        tags:
+            - { name: doctrine.dbal.type, type: enum }
+
+    # Automatically load classes in src/ as services
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # Register Recaptcha3Service for reCAPTCHA validation
+    App\Service\Recaptcha3Service:
+        arguments:
+            $client: '@http_client'
+            $secretKey: '%env(RECAPTCHA_SECRET_KEY)%'  # Using environment variable for secret key
+
+    # Register FaceRecognitionService if needed
+    App\Service\FaceRecognitionService:
+        arguments:
+            $knownFacesDir: '%known_faces_directory%'  # Add correct directory for known faces
+
+
+    App\Service\TwilioService:
+        arguments:
+            $sid: '%env(TWILIO_SID)%'
+            $token: '%env(TWILIO_TOKEN)%'
+            $from: '%env(TWILIO_FROM)%'
+
+    # explicitly configure the QrCodeService
+    App\Service\QrCodeService:
+        public: true
+        arguments:
+            $params: '@parameter_bag'
+
+  

@@ -1,0 +1,59 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Modifier un Utilisateur{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-card p-4 shadow-sm rounded">
+        <h1 class="h3 text-primary mb-4">Modifier l'Utilisateur : {{ utilisateur.nom }}</h1>
+        {{ form_start(form) }}
+            <div class="mb-3">
+                {{ form_label(form.nom) }}
+                {{ form_widget(form.nom, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.nom) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.prenom) }}
+                {{ form_widget(form.prenom, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.prenom) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.email) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.password.first) }}
+                {{ form_widget(form.password.first, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.password.first) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.password.second) }}
+                {{ form_widget(form.password.second, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.password.second) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.genre) }}
+                {{ form_widget(form.genre, { 'attr': {'class': 'form-select'} }) }}
+                {{ form_errors(form.genre) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.role) }}
+                {{ form_widget(form.role, { 'attr': {'class': 'form-select'} }) }}
+                {{ form_errors(form.role) }}
+            </div>
+            <div class="mb-3">
+                {% if utilisateur.photo %}
+                    <div class="mb-2">
+                        <img src="{{ asset('uploads/photos/' ~ utilisateur.photo) }}" class="img-thumbnail" width="150">
+                    </div>
+                {% endif %}
+                {{ form_label(form.photo) }}
+                {{ form_widget(form.photo, { 'attr': {'class': 'form-control'} }) }}
+                {{ form_errors(form.photo) }}
+            </div>
+            <button type="submit" class="btn btn-success mt-3">Enregistrer les modifications</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

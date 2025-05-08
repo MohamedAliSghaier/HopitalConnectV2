@@ -1,0 +1,16 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: annotation
+
+app_login:
+  path: /login
+  controller: App\Controller\SecurityController::login
+
+
+
+
+
+app_logout:
+  path: /logout

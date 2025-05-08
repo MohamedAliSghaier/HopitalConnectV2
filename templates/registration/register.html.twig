@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="content-container mt-200">
+<div class="container mt-5 d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 10px;">
+        <h2 class="text-center text-primary mb-4">Inscription Patient</h2>
+
+        {{ form_start(registrationForm, {'attr': {'enctype': 'multipart/form-data'}}) }}
+        {% if app.request.getSession().getFlashBag().has('success') %}
+            <div class="alert alert-success">
+                {{ app.request.getSession().getFlashBag().get('success')[0] }}
+            </div>
+        {% endif %}
+        {% if app.request.getSession().getFlashBag().has('error') %}
+            <div class="alert alert-danger">
+                {{ app.request.getSession().getFlashBag().get('error')[0] }}
+            </div>
+        {% endif %}
+        {% if app.request.getSession().getFlashBag().has('warning') %}
+            <div class="alert alert-warning">
+                {{ app.request.getSession().getFlashBag().get('warning')[0] }}
+            </div>
+        {% endif %}
+        <div class="form-group mb-3">
+            {{ form_row(registrationForm.nom) }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form_row(registrationForm.prenom) }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form_row(registrationForm.email) }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form_row(registrationForm.plaintext) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(registrationForm.genre) }}
+            {{ form_widget(registrationForm.genre) }}
+            {{ form_errors(registrationForm.genre) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(registrationForm.photo) }}
+            {{ form_widget(registrationForm.photo, {'attr': {'class': 'form-control'}}) }}
+            <small class="form-text text-muted">Formats acceptés: JPG, PNG, GIF (max 1MB)</small>
+            {{ form_errors(registrationForm.photo) }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form_row(registrationForm.dateNaissance) }}
+        </div>
+        <div class="form-group mb-3">
+            {{ form_row(registrationForm.adresse) }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
+        {{ form_end(registrationForm) }}
+    </div>
+</div>
+{% endblock %}

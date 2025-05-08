@@ -1,0 +1,17 @@
+{# templates/registration/patient_form.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Complétez vos informations{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Complétez vos informations</h1>
+
+        {{ form_start(patientForm) }}
+            {{ form_row(patientForm.dateNaissance) }}
+            {{ form_row(patientForm.adresse) }}
+            <button type="submit" class="btn btn-primary">Compléter</button>
+        {{ form_end(patientForm) }}
+    </div>
+{% endblock %}

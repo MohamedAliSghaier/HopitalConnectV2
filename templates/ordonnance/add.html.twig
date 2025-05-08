@@ -1,0 +1,218 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Ajouter Ordonnance{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .rv-form-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .rv-form-header {
+        border-left: 4px solid #4a90e2;
+        padding-left: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-input {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.75rem 1.25rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    }
+
+    .form-error {
+        color: #e74c3c;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .medication-search {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .medication-results {
+        margin-top: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .medication-item {
+        padding: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+        cursor: pointer;
+    }
+
+    .medication-item:hover {
+        background: #e9ecef;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+<div class="rv-form-card">
+    <h2 class="h4 rv-form-header">
+        <i class="fas fa-{{ 'add' in app.request.attributes.get('_route') ? 'plus' : 'edit' }} me-2"></i>
+        {{ 'add' in app.request.attributes.get('_route') ? 'Nouvelle' : 'Ajouter' }} Ordonnance
+    </h2>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {% if form.vars.errors|length > 0 %}
+        <div class="form-error mb-4">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+    
+    <div class="mb-4">
+        <p>Médecin connecté : <strong>{{ nomMedecinConnecte }}</strong></p>
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.patient) }}
+        {{ form_widget(form.patient, {'attr': {'class': 'form-input'}}) }}
+        {% if form.patient.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.patient) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="medication-search">
+        <h3>Recherche de médicaments par symptômes</h3>
+        <div class="input-group mb-3">
+            <input type="text" id="symptoms-input" class="form-control" placeholder="Entrez les symptômes (séparés par des virgules)">
+            <button class="btn btn-primary" type="button" id="search-medications">Rechercher</button>
+        </div>
+        <div class="medication-results" id="medication-results"></div>
+    </div>
+
+    <div class="mb-4">
+        <h3>Médicaments</h3>
+        <div id="medicaments-container" data-prototype="{{ form_widget(form.medicaments.vars.prototype)|e('html_attr') }}">
+            {{ form_widget(form.medicaments) }}
+        </div>
+        <button type="button" id="add-medicament" class="btn btn-secondary mt-2">Ajouter un médicament</button>
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.date_prescription) }}
+        {{ form_widget(form.date_prescription, {'attr': {'class': 'form-input'}}) }}
+        {% if form.date_prescription.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.date_prescription) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.instructions) }}
+        {{ form_widget(form.instructions, {'attr': {'class': 'form-input'}}) }}
+        {% if form.instructions.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.instructions) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.statut) }}
+        {{ form_widget(form.statut, {'attr': {'class': 'form-input'}}) }}
+        {% if form.statut.vars.errors|length > 0 %}
+            <div class="form-error">
+                {{ form_errors(form.statut) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="d-flex justify-content-end gap-3 mt-4">
+        <button type="submit" class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i>Enregistrer
+        </button>
+        <a href="{{ path('ordonnance_list') }}" class="btn btn-outline-secondary px-4">
+            <i class="fas fa-times me-2"></i>Annuler
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+</div>
+
+<script>
+    document.getElementById('add-medicament').addEventListener('click', function () {
+        const container = document.getElementById('medicaments-container');
+        const prototype = container.dataset.prototype;
+        const index = container.children.length;
+        const newForm = prototype.replace(/__name__/g, index);
+        container.insertAdjacentHTML('beforeend', newForm);
+    });
+
+    document.getElementById('search-medications').addEventListener('click', function() {
+        const symptoms = document.getElementById('symptoms-input').value;
+        if (!symptoms) {
+            alert('Veuillez entrer au moins un symptôme');
+            return;
+        }
+
+        fetch('/medications/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ symptoms: symptoms.split(',').map(s => s.trim()) })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultsContainer = document.getElementById('medication-results');
+            resultsContainer.innerHTML = '';
+            
+            if (data.error) {
+                resultsContainer.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                return;
+            }
+
+            Object.entries(data).forEach(([medication, description]) => {
+                const div = document.createElement('div');
+                div.className = 'medication-item';
+                div.innerHTML = `
+                    <strong>${medication}</strong>
+                    <p class="mb-0">${description}</p>
+                `;
+                div.addEventListener('click', () => {
+                    const container = document.getElementById('medicaments-container');
+                    const prototype = container.dataset.prototype;
+                    const index = container.children.length;
+                    const newForm = prototype.replace(/__name__/g, index);
+                    container.insertAdjacentHTML('beforeend', newForm);
+                    
+                    const lastForm = container.lastElementChild;
+                    lastForm.querySelector('input[type="text"]').value = medication;
+                });
+                resultsContainer.appendChild(div);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('medication-results').innerHTML = 
+                '<div class="alert alert-danger">Une erreur est survenue lors de la recherche</div>';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base_internal.html.twig' %}
+
+
+{% block title %}{{ 'add' in app.request.attributes.get('_route') ? 'New' : 'Edit' }} Appointment{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('assets/css/LineIcons.2.0.css') }}">
+<style>
+    .rv-form-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 2.5rem;
+        max-width: 800px;
+        margin: 2rem auto;
+        border-top: 4px solid #4e8cff;
+    }
+
+    .rv-form-header {
+        color: #2a2a2a;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #555;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid #e1e5ee;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: all 0.3s;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #4e8cff;
+        box-shadow: 0 0 0 3px rgba(78, 140, 255, 0.1);
+    }
+
+    .btn-primary {
+        background-color: #4e8cff;
+        border-color: #4e8cff;
+        padding: 0.6rem 1.5rem;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 6px;
+        padding: 0.6rem 1.5rem;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+
+    .input-icon input {
+        padding-left: 40px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="rv-form-card">
+    <h2 class="rv-form-header">
+        <i class="lni lni-{{ 'add' in app.request.attributes.get('_route') ? 'plus' : 'pencil' }} me-2"></i>
+        {{ 'add' in app.request.attributes.get('_route') ? 'New' : 'Edit' }} Appointment
+    </h2>
+
+    {{ form_start(form) }}
+    
+    <div class="form-group">
+        {{ form_label(form.date) }}
+        <div class="input-icon">
+            <i class="lni lni-calendar"></i>
+            {{ form_widget(form.date, {'attr': {'class': 'form-control flatpickr-date'}}) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.typeConsultationId) }}
+        {{ form_widget(form.typeConsultationId, {'attr': {'class': 'form-select'}}) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.startTime) }}
+        <div class="input-icon">
+            <i class="lni lni-alarm-clock"></i>
+            {{ form_widget(form.startTime, {'attr': {'class': 'form-control flatpickr-time'}}) }}
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-3 mt-4">
+        <a href="{{ path('rendezvous_listpatient') }}" class="btn btn-outline-secondary">
+            <i class="lni lni-close me-2"></i>Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="lni lni-save me-2"></i>Save
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+
+<script>
+    // Date picker
+    flatpickr('.flatpickr-date', {
+        dateFormat: "Y-m-d",
+        locale: "en",
+        minDate: "today"
+    });
+
+    // Time picker
+    flatpickr('.flatpickr-time', {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true,
+        minuteIncrement: 15
+    });
+</script>
+{% endblock %}
