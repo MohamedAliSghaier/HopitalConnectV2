@@ -1,0 +1,64 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Mes Ordonnances{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-card p-4">
+        <h1 class="h3 mb-4"><i class="fas fa-file-prescription me-2"></i>Mes Ordonnances</h1>
+
+        <table class="rv-table table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Médecin</th>
+                    <th>Date de Prescription</th>
+                    <th>Médicaments</th>
+                    <th>Instructions</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ordonnance in ordonnances %}
+                <tr>
+                    <!-- Display the doctor's name -->
+                    <td>
+                        {% if ordonnance.medecin and ordonnance.medecin.utilisateur.nom %}
+                            {{ ordonnance.medecin.utilisateur.nom }}
+                        {% else %}
+                            Non défini
+                        {% endif %}
+                    </td>
+
+                    <!-- Display the prescription date -->
+                    <td>{{ ordonnance.datePrescription ? ordonnance.datePrescription|date('d/m/Y H:i') : 'Non défini' }}</td>
+
+                    <!-- Display the list of medications -->
+                    <td>
+                        <ul>
+                            {% for medicament in ordonnance.medicaments %}
+                                {% if medicament is iterable %}
+                                    <li>Format invalide</li>
+                                {% else %}
+                                    {% set parts = medicament|split(':') %}
+                                    <li>{{ parts[0] }} - Quantité : {{ parts[1] }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </td>
+
+                    <!-- Display instructions -->
+                    <td>{{ ordonnance.instructions }}</td>
+
+                    <!-- Display the status -->
+                    <td>{{ ordonnance.statut }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">Aucune ordonnance trouvée</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

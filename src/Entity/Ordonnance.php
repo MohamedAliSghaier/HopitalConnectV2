@@ -3,101 +3,144 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Entity\Patient;
 
 #[ORM\Entity]
 class Ordonnance
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $id;
+    private ?int $id = null;
 
-    
-        #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "ordonnances")]
-    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Patient $patient_id;
+    #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: "ordonnances")]
+    #[ORM\JoinColumn(name: 'medecin_id', referencedColumnName: 'id', onDelete: 'CASCADE', nullable: false)]
+    //#[Assert\NotNull(message: "Le médecin est obligatoire.")]
+    private ?Medecin $medecin = null;
+
+    #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "ordonnances")]
+    #[ORM\JoinColumn(name: 'patient_id', referencedColumnName: 'id', onDelete: 'CASCADE', nullable: false)]
+    #[Assert\NotNull(message: "Le patient est obligatoire.")]
+    private ?Patient $patient = null;
+
+    #[ORM\Column(type: "json", nullable: true)]
+    private ?array $medicaments = null;
+
+    #[ORM\Column(type: "datetime", nullable: true)]
+    #[Assert\NotNull(message: "La date de prescription est obligatoire.")]
+    private ?\DateTimeInterface $date_prescription = null;
 
     #[ORM\Column(type: "text")]
-    private string $medicaments;
-
-    #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $date_prescription;
-
-    #[ORM\Column(type: "text")]
+    #[Assert\NotBlank(message: "Les instructions sont obligatoires.")]
+    #[Assert\Length(min: 5, minMessage: "Les instructions doivent contenir au moins {{ limit }} caractères.")]
     private string $instructions;
 
     #[ORM\Column(type: "string", length: 50)]
+    #[Assert\NotBlank(message: "Le statut est obligatoire.")]
+    #[Assert\Choice(choices: ["En cours", "Terminée", "Annulée"], message: "Le statut doit être 'En cours', 'Terminée' ou 'Annulée'.")]
     private string $statut;
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId($value)
-    {
-        $this->id = $value;
-    }
-
-    public function getMedecin_id()
+    public function getMedecinId(): ?Medecin
     {
         return $this->medecin_id;
     }
 
-    public function setMedecin_id($value)
+    public function setMedecinId(?Medecin $medecin): void
     {
-        $this->medecin_id = $value;
+        $this->medecin_id = $medecin;
     }
 
-    public function getPatient_id()
+    public function getPatientId(): ?Patient
     {
         return $this->patient_id;
     }
 
-    public function setPatient_id($value)
+    public function setPatientId(?Patient $patient): void
     {
-        $this->patient_id = $value;
+        $this->patient_id = $patient;
     }
 
-    public function getMedicaments()
+    public function getMedicaments(): ?array
     {
-        return $this->medicaments;
+        // Return the medicaments field as an array (or an empty array if null)
+        return $this->medicaments ?? [];
     }
 
-    public function setMedicaments($value)
+    public function setMedicaments(?array $medicaments): self
     {
-        $this->medicaments = $value;
+        $this->medicaments = $medicaments;
+
+        return $this;
     }
 
-    public function getDate_prescription()
+    public function addMedicament(?string $nom, ?int $quantite): void
+    {
+        if ($nom !== null && $quantite !== null) {
+            $this->medicaments[] = sprintf('%s:%d', $nom, $quantite);
+        }
+    }
+
+    public function removeMedicament(string $nom): void
+    {
+        $this->medicaments = array_filter($this->medicaments, function ($medicament) use ($nom) {
+            return $medicament['nom'] !== $nom;
+        });
+    }
+
+    public function getDatePrescription(): ?\DateTimeInterface
     {
         return $this->date_prescription;
     }
 
-    public function setDate_prescription($value)
+    public function setDatePrescription(?\DateTimeInterface $date): void
     {
-        $this->date_prescription = $value;
+        $this->date_prescription = $date;
     }
 
-    public function getInstructions()
+    public function getInstructions(): string
     {
         return $this->instructions;
     }
 
-    public function setInstructions($value)
+    public function setInstructions(string $instructions): void
     {
-        $this->instructions = $value;
+        $this->instructions = $instructions;
     }
 
-    public function getStatut()
+    public function getStatut(): string
     {
         return $this->statut;
     }
 
-    public function setStatut($value)
+    public function setStatut(string $statut): void
     {
-        $this->statut = $value;
+        $this->statut = $statut;
+    }
+
+    public function getMedecin(): ?Medecin
+    {
+        return $this->medecin;
+    }
+
+    public function setMedecin(?Medecin $medecin): void
+    {
+        $this->medecin = $medecin;
+    }
+
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?Patient $patient): void
+    {
+        $this->patient = $patient;
     }
 }

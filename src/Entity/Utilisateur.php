@@ -60,8 +60,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: "utilisateur", targetEntity: Administrateur::class, cascade: ['persist', 'remove'])]
     private ?Administrateur $administrateur = null;
 
-    #[ORM\OneToMany(mappedBy: "utilisateur", targetEntity: Medecin::class)]
-    private Collection $medecins;
+   
+
+    #[ORM\OneToOne(mappedBy: "utilisateur", targetEntity: Medecin::class)]
+    private ?Medecin $medecin;
+
+
     #[ORM\OneToMany(mappedBy: "utilisateur", targetEntity: Patient::class)]
     private Collection $patients;
    #[ORM\OneToOne(mappedBy: "utilisateur", targetEntity: Patient::class, cascade: ["persist", "remove"])]
@@ -73,8 +77,6 @@ private ?Patient $patient = null;
     #[ORM\OneToMany(mappedBy: "utilisateur", targetEntity: Reclamation::class)]
     private Collection $reclamations;
 
-    #[ORM\OneToOne(mappedBy: 'id', targetEntity: Medecin::class, cascade: ['persist', 'remove'])]
-    private ?Medecin $medecin = null;
 
     #[ORM\OneToOne(mappedBy: "utilisateur", targetEntity: Pharmacien::class, cascade: ['persist', 'remove'])]
     private ?Pharmacien $pharmacien = null;
@@ -224,19 +226,10 @@ public function setPlaintext(?string $plaintext): self
     {
         return $this->medecin;
     }
-
-    public function setMedecin(?Medecin $medecin): self
+    
+    public function setMedecin(?Medecin $medecins): self
     {
-        if ($medecin === null && $this->medecin !== null) {
-            $this->medecin->setUtilisateur(null);
-        }
-
-        if ($medecin !== null && $medecin->getUtilisateur() !== $this) {
-            $medecin->setUtilisateur($this);
-        }
-
         $this->medecin = $medecin;
-
         return $this;
     }
     public function getPatient(): ?Patient

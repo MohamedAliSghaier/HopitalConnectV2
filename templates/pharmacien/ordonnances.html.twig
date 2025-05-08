@@ -1,0 +1,62 @@
+{% extends 'base_internal.html.twig' %}
+
+
+{% block title %}Liste des Ordonnances{% endblock %}
+
+{% block body %}
+<div class="content-container mt-100">
+    <div class="rv-card p-4">
+        <h1 class="h3 mb-4"><i class="fas fa-file-prescription me-2"></i>Liste des Ordonnances</h1>
+
+        <table class="rv-table table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Médecin</th>
+                    <th>Patient</th>
+                    <th>Date de Prescription</th>
+                    <th>Médicaments</th>
+                    <th>Instructions</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ordonnance in ordonnances %}
+                <tr>
+                    <td>{{ ordonnance.medecin.utilisateur.getNom() }}</td> <!-- Access the Medecin's name via the Utilisateur entity -->
+                    <td>{{ ordonnance.patient.nom }}</td>
+                    <td>{{ ordonnance.datePrescription ? ordonnance.datePrescription|date('d/m/Y H:i') : 'Non défini' }}</td>
+                    <td>
+                        <ul>
+                            {% for medicament in ordonnance.medicaments %}
+                                {% if medicament is iterable %}
+                                    <li>Format invalide</li>
+                                {% else %}
+                                    {% set parts = medicament|split(':') %}
+                                    <li>{{ parts[0] }} - Quantité : {{ parts[1] }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>{{ ordonnance.instructions }}</td>
+                    <td>{{ ordonnance.statut }}</td>
+                    <td>
+                        {% if ordonnance.statut != 'Terminée' %}
+                            <a href="{{ path('pharmacien_validate', { id: ordonnance.id }) }}" class="btn btn-success btn-sm">
+                                Valider
+                            </a>
+                        {% else %}
+                            <span class="text-muted">Déjà validée</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">Aucune ordonnance trouvée</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

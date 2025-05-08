@@ -3,28 +3,31 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use App\Entity\Rendezvous;
+use App\Entity\Patient;
+use App\Entity\Medecin;
 
 #[ORM\Entity]
 class Analyse
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private int $id;
 
-        #[ORM\ManyToOne(targetEntity: Rendezvous::class, inversedBy: "analyses")]
-    #[ORM\JoinColumn(name: 'id_patient', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Rendezvous $id_patient;
 
-        #[ORM\ManyToOne(targetEntity: Rendezvous::class, inversedBy: "analyses")]
+    #[ORM\ManyToOne(targetEntity: Patient::class)]
+#[ORM\JoinColumn(name: 'id_patient', referencedColumnName: 'id', onDelete: 'CASCADE')]
+private ?Patient $patient = null;
+
+
+    #[ORM\ManyToOne(targetEntity: Medecin::class)]
     #[ORM\JoinColumn(name: 'id_medecin', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Rendezvous $id_medecin;
+    private ?Medecin $medecin = null;
 
-        #[ORM\ManyToOne(targetEntity: Rendezvous::class, inversedBy: "analyses")]
+    #[ORM\ManyToOne(targetEntity: Rendezvous::class)]
     #[ORM\JoinColumn(name: 'id_rendezvous', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Rendezvous $id_rendezvous;
+    private ?Rendezvous $rendezvous = null;
 
     #[ORM\Column(type: "date")]
     private \DateTimeInterface $date;
@@ -32,63 +35,63 @@ class Analyse
     #[ORM\Column(type: "string", length: 255)]
     private string $type;
 
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId($value)
+    public function getPatient(): ?Patient
     {
-        $this->id = $value;
+        return $this->patient;
     }
 
-    public function getId_patient()
+    public function setPatient(?Patient $patient): self
     {
-        return $this->id_patient;
+        $this->patient = $patient;
+        return $this;
     }
 
-    public function setId_patient($value)
+    public function getMedecin(): ?Medecin
     {
-        $this->id_patient = $value;
+        return $this->medecin;
     }
 
-    public function getId_medecin()
+    public function setMedecin(?Medecin $medecin): self
     {
-        return $this->id_medecin;
+        $this->medecin = $medecin;
+        return $this;
     }
 
-    public function setId_medecin($value)
+    public function getRendezvous(): ?Rendezvous
     {
-        $this->id_medecin = $value;
+        return $this->rendezvous;
     }
 
-    public function getId_rendezvous()
+    public function setRendezvous(?Rendezvous $rendezvous): self
     {
-        return $this->id_rendezvous;
+        $this->rendezvous = $rendezvous;
+        return $this;
     }
 
-    public function setId_rendezvous($value)
-    {
-        $this->id_rendezvous = $value;
-    }
-
-    public function getDate()
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
 
-    public function setDate($value)
+    public function setDate(\DateTimeInterface $date): self
     {
-        $this->date = $value;
+        $this->date = $date;
+        return $this;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function setType($value)
+    public function setType(string $type): self
     {
-        $this->type = $value;
+        $this->type = $type;
+        return $this;
     }
 }

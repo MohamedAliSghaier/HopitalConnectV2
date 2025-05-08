@@ -1,0 +1,292 @@
+{# JavaScript pour la recherche d'assurance #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Éléments du DOM avec vérification de leur existence
+    const searchForm = document.getElementById('searchForm');
+    const resultsContainer = document.getElementById('assuranceList');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    const titulaireSearchInput = document.getElementById('search-titulaire');
+    const titulaireResultCount = document.getElementById('titulaire-result-count');
+    
+    // Variables pour les timeouts
+    let searchTimeout;
+    let titulaireSearchTimeout;
+    let lastSearchParams = null;
+
+    // Fonctions utilitaires avec vérification de l'existence des éléments
+    function showLoading() {
+        console.log('Showing loading indicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'block';
+        }
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+    }
+
+    function hideLoading() {
+        console.log('Hiding loading indicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+        }
+    }
+
+    function showError(message) {
+        console.error('Search error:', message);
+        if (errorMessage) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+        hideLoading();
+    }
+
+    function updateResults(html, count) {
+        console.log(`Updating results with ${count} items`);
+        if (resultsContainer) {
+            resultsContainer.innerHTML = html;
+        }
+        
+        if (noResultsMessage) {
+            noResultsMessage.style.display = count === 0 ? 'block' : 'none';
+        }
+        
+        hideLoading();
+    }
+
+    // Fonction pour vérifier si les paramètres de recherche ont changé
+    function haveSearchParamsChanged(newParams) {
+        if (!lastSearchParams) return true;
+        return newParams.toString() !== lastSearchParams.toString();
+    }
+
+    // Fonction principale de recherche
+    function performSearch(event) {
+        if (event) {
+            event.preventDefault();
+        }
+
+        if (!searchForm) {
+            console.error('Search form not found in DOM');
+            return;
+        }
+
+        showLoading();
+        console.log('Starting search...');
+
+        try {
+            // Récupération des données du formulaire
+            const formData = new FormData(searchForm);
+            const searchParams = new URLSearchParams();
+            
+            // Ajout des paramètres de recherche
+            for (let [key, value] of formData.entries()) {
+                if (value) {
+                    searchParams.append(key, value);
+                    console.log(`Adding search param: ${key}=${value}`);
+                }
+            }
+            
+            // Récupération et validation des paramètres de tri
+            const sortBySelect = document.querySelector('select[name="sort_by"]');
+            const sortOrderSelect = document.querySelector('select[name="sort_order"]');
+            
+            const sortBy = sortBySelect?.value || 'date_debut';
+            const sortOrder = sortOrderSelect?.value || 'DESC';
+            
+            console.log(`Sort parameters - by: ${sortBy}, order: ${sortOrder}`);
+            searchParams.append('sort_by', sortBy);
+            searchParams.append('sort_order', sortOrder);
+
+            // Vérifier si les paramètres ont changé
+            if (!haveSearchParamsChanged(searchParams)) {
+                console.log('Search parameters unchanged, skipping request');
+                hideLoading();
+                return;
+            }
+
+            lastSearchParams = searchParams;
+
+            // Construction de l'URL
+            const url = '{{ path('assurance_search_ajax') }}?' + searchParams.toString();
+            console.log('Sending request to:', url);
+
+            // Envoi de la requête
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (!data) {
+                    throw new Error('No data received from server');
+                }
+
+                if (data.success) {
+                    updateResults(data.html, data.count);
+                } else {
+                    showError(data.error || 'Une erreur est survenue lors de la recherche');
+                }
+            })
+            .catch(error => {
+                console.error('Error details:', error);
+                showError('Une erreur est survenue lors de la communication avec le serveur');
+            });
+
+        } catch (error) {
+            console.error('Critical error in performSearch:', error);
+            showError('Une erreur critique est survenue lors de la recherche');
+        }
+    }
+
+    // Fonction pour la recherche par nom du titulaire
+    function performTitulaireSearch(searchTerm) {
+        if (!searchTerm || searchTerm.trim() === '') {
+            if (titulaireResultCount) {
+                titulaireResultCount.textContent = '';
+            }
+            // Retourner à la liste complète des assurances
+            showLoading();
+            fetch('{{ path('assurance_search_ajax') }}', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    updateResults(data.html, data.count);
+                } else {
+                    showError(data.error || 'Une erreur est survenue lors de la recherche');
+                }
+            })
+            .catch(error => {
+                console.error('Error in titulaire search:', error);
+                showError('Une erreur est survenue lors de la recherche du titulaire');
+            })
+            .finally(() => {
+                hideLoading();
+            });
+            return;
+        }
+
+        showLoading();
+        console.log('Starting titulaire search:', searchTerm);
+
+        const url = '{{ path('assurance_search_by_titulaire') }}?search_term=' + encodeURIComponent(searchTerm);
+        console.log('Titulaire search URL:', url);
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            console.log('Titulaire search response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Titulaire search response:', data);
+            if (!data) {
+                throw new Error('No data received from server');
+            }
+
+            if (data.success) {
+                updateResults(data.html, data.count);
+                if (titulaireResultCount) {
+                    titulaireResultCount.textContent = `${data.count} résultat(s) trouvé(s) pour "${searchTerm}"`;
+                }
+            } else {
+                showError(data.error || 'Une erreur est survenue lors de la recherche');
+                if (titulaireResultCount) {
+                    titulaireResultCount.textContent = '';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error in titulaire search:', error);
+            showError('Une erreur est survenue lors de la recherche du titulaire');
+            if (titulaireResultCount) {
+                titulaireResultCount.textContent = '';
+            }
+        })
+        .finally(() => {
+            hideLoading();
+        });
+    }
+
+    // Initialisation des gestionnaires d'événements
+    if (searchForm) {
+        console.log('Initializing search form event handlers');
+        
+        // Gestionnaire d'événements pour le formulaire de recherche
+        searchForm.addEventListener('submit', performSearch);
+
+        // Gestionnaire d'événements pour les changements de tri
+        const sortSelects = document.querySelectorAll('select[name="sort_by"], select[name="sort_order"]');
+        sortSelects.forEach(select => {
+            select.addEventListener('change', (e) => {
+                console.log(`Sort changed: ${e.target.name} = ${e.target.value}`);
+                performSearch();
+            });
+        });
+
+        // Gestionnaire d'événements pour les champs de recherche avec debounce
+        const searchInputs = searchForm.querySelectorAll('input[type="text"], input[type="date"], select');
+        searchInputs.forEach(input => {
+            ['input', 'change'].forEach(eventType => {
+                input.addEventListener(eventType, function(e) {
+                    console.log(`Search input ${eventType}: ${e.target.name} = ${e.target.value}`);
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(performSearch, 300);
+                });
+            });
+        });
+    } else {
+        console.error('Search form not found in DOM');
+    }
+
+    // Gestionnaire d'événements pour la recherche par nom du titulaire
+    if (titulaireSearchInput) {
+        console.log('Initializing titulaire search input handler');
+        titulaireSearchInput.addEventListener('input', function(e) {
+            clearTimeout(titulaireSearchTimeout);
+            const searchTerm = e.target.value;
+            console.log('Titulaire search term:', searchTerm);
+            
+            titulaireSearchTimeout = setTimeout(() => {
+                performTitulaireSearch(searchTerm);
+            }, 300);
+        });
+    } else {
+        console.log('Titulaire search input not found in DOM');
+    }
+
+    // Effectuer une recherche initiale au chargement de la page
+    console.log('Performing initial search');
+    performSearch();
+});
+</script> 

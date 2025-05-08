@@ -1,0 +1,209 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Patient Feedback{% endblock %}
+
+{% block body %}
+<style>
+    /* Scoped styles for the rating section */
+    .rating-stars {
+        font-size: 30px;
+        color: gold;
+    }
+    .rating-stars .full-star {
+        color: gold;
+    }
+    .rating-stars .half-star {
+        color: gold;
+    }
+    .rating-stars .empty-star {
+        color: #ddd;
+    }
+
+    /* Chart container styles */
+    .chart-container {
+        margin: 2rem auto;
+        max-width: 800px;
+        width: 90%;
+        padding: 1rem;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+    canvas {
+        width: 100% !important; /* Make sure the canvas takes full width */
+        height: 400px !important; /* Set a fixed height for the chart */
+    }
+
+    /* Styling for the doctor’s name section */
+    h1 {
+        padding: 180px 0;  /* Top and bottom padding reduced */
+        margin-bottom: 10px;  /* Less space below the heading */
+        text-align: center;  /* Center the name */
+        font-size: 3em; /* Increase font size for better readability */
+        color: #257180; /* Color matching your theme */
+    }
+
+    /* Styling for the specialité */
+    p {
+        font-size: 1.5em;
+        text-align: center;
+        color: #555; /* A neutral color for readability */
+        margin-top: -10px; /* Pull it closer to the name */
+    }
+
+    /* Sections Styling */
+    .section {
+        margin-bottom: 2rem;
+    }
+
+    /* List styling inside the sections */
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    ul li {
+        font-size: 1.1em;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Improve styling of the average note and its elements */
+    .average-note h3 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+    .average-note p {
+        font-size: 1.2em;
+        margin: 5px 0;
+    }
+
+    /* Adjust the rating star size */
+    .rating-stars {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .rating-stars span {
+        margin: 0 5px;
+        font-size: 2em;
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.5em;
+        }
+        .chart-container {
+            width: 95%;
+        }
+    }
+
+</style>
+
+<div class="medecin-feedback-page">
+    <div class="container">
+        <h1>{{ medecin.utilisateur.nom }} {{ medecin.utilisateur.prenom }}</h1>
+        <p>Spécialité: <strong>{{ medecin.specialite }}</strong></p>
+
+        <div class="section">
+            <h2>Avis</h2>
+            <ul>
+                {% for avis in avisList %}
+                    <li>
+                        <strong>Note:</strong> {{ avis.note }}<br>
+                        <strong>Commentaire:</strong> {{ avis.commentaire }}
+                    </li>
+                {% else %}
+                    <li>Aucun avis pour l’instant.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Réclamations</h2>
+            <ul>
+                {% for reclamation in reclamationList %}
+                    <li>
+                        <strong>Sujet:</strong> {{ reclamation.sujet }}<br>
+                        <strong>Description:</strong> {{ reclamation.description }}
+                    </li>
+                {% else %}
+                    <li>Aucune réclamation enregistrée.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="average-note">
+            <h3>Note Moyenne :</h3>
+            {% set rounded = avgReview|default(0)|round(1) %}
+            <p>{{ rounded }}/5 ({{ avisList|length }} avis)</p>
+
+            <div class="rating-stars">
+                {% for i in 1..5 %}
+                    {% if i <= rounded %}
+                        <span class="full-star">★</span>
+                    {% elseif i - rounded < 1 %}
+                        <span class="half-star">☆</span> <!-- Half star here -->
+                    {% else %}
+                        <span class="empty-star">☆</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <hr>
+
+            <h3>Nombre de réclamations :</h3>
+            <p>{{ reclamationCount }}</p>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-container">
+            <h3>Statistiques des Avis</h3>
+            <canvas id="ratingChart"></canvas>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Prepare the data from Twig to JavaScript
+    var ratingData = [
+        {% for avis in avisList %}
+            {{ avis.note }},
+        {% endfor %}
+    ];
+
+    // Create chart
+    var ctx = document.getElementById('ratingChart').getContext('2d');
+    var ratingChart = new Chart(ctx, {
+        type: 'bar', // Bar chart type
+        data: {
+            labels: ['1', '2', '3', '4', '5'], // Rating categories
+            datasets: [{
+                label: 'Nombre d\'avis par note',
+                data: [
+                    ratingData.filter(function(item) { return item == 1 }).length,
+                    ratingData.filter(function(item) { return item == 2 }).length,
+                    ratingData.filter(function(item) { return item == 3 }).length,
+                    ratingData.filter(function(item) { return item == 4 }).length,
+                    ratingData.filter(function(item) { return item == 5 }).length,
+                ],
+                backgroundColor: '#FD7170', // Bar color
+                borderColor: '#E36C64',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

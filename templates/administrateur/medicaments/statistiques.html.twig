@@ -1,0 +1,94 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Statistiques des Médicaments{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1 class="mb-4">Statistiques des Médicaments</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total des Médicaments</h5>
+                    <h2 class="text-primary">{{ totalMedicaments }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Médicaments par Pharmacien</h5>
+                    <canvas id="medicamentsParPharmacien"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Évolution du Stock</h5>
+                    <canvas id="evolutionStock"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Graphique des médicaments par pharmacien
+    new Chart(document.getElementById('medicamentsParPharmacien'), {
+        type: 'pie',
+        data: {
+            labels: {{ statsGraphiques.medicamentsParPharmacien.labels|json_encode|raw }},
+            datasets: [{
+                data: {{ statsGraphiques.medicamentsParPharmacien.data|json_encode|raw }},
+                backgroundColor: {{ statsGraphiques.medicamentsParPharmacien.backgroundColor|json_encode|raw }},
+                borderColor: {{ statsGraphiques.medicamentsParPharmacien.borderColor|json_encode|raw }},
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+    // Graphique de l'évolution du stock
+    new Chart(document.getElementById('evolutionStock'), {
+        type: 'line',
+        data: {
+            labels: {{ statsGraphiques.evolutionStock.labels|json_encode|raw }},
+            datasets: [{
+                label: 'Quantité en stock',
+                data: {{ statsGraphiques.evolutionStock.data|json_encode|raw }},
+                backgroundColor: '{{ statsGraphiques.evolutionStock.backgroundColor }}',
+                borderColor: '{{ statsGraphiques.evolutionStock.borderColor }}',
+                borderWidth: 2,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

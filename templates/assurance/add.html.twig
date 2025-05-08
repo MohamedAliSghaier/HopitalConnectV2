@@ -1,0 +1,361 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}{{ 'add' in app.request.attributes.get('_route') ? 'Nouvelle' : 'Modifier' }} Assurance{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .assurance-form-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        max-width: 600px;
+        margin: 0 auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .assurance-form-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #4a90e2;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: #333;
+    }
+
+    input, select, textarea {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+    }
+
+    .form-error {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        text-transform: none;
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        background-color: #4a90e2;
+        color: #fff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #357abd;
+    }
+
+    .btn-secondary {
+        background-color: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e2e2e2;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .close {
+        cursor: pointer;
+        font-size: 24px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<br><br><br><br>
+
+<div class="assurance-form-card">
+    <h2 class="assurance-form-header">
+        <i class="fas fa-{{ 'add' in app.request.attributes.get('_route') ? 'plus' : 'edit' }} me-2"></i>
+        {{ 'add' in app.request.attributes.get('_route') ? 'Nouvelle' : 'Modifier' }} Assurance
+    </h2>
+
+    {{ form_start(form) }}
+        <div class="form-group">
+            <label for="NomAssureur">Nom de l'assureur</label>
+            {{ form_widget(form.NomAssureur, {'attr': {'class': 'form-control'}}) }}
+            {% if form.NomAssureur.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.NomAssureur) }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="TypeAssureur">Type d'assureur</label>
+            {{ form_widget(form.TypeAssureur, {'attr': {'class': 'form-control'}}) }}
+            {% if form.TypeAssureur.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.TypeAssureur) }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="NumeroPolice">Numéro de police</label>
+            {{ form_widget(form.NumeroPolice, {'attr': {'class': 'form-control'}}) }}
+            {% if form.NumeroPolice.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.NumeroPolice) }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="NomTitulaire">Nom du titulaire</label>
+            {{ form_widget(form.NomTitulaire, {'attr': {'class': 'form-control'}}) }}
+            {% if form.NomTitulaire.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.NomTitulaire) }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="TypeCouverture">Type de couverture</label>
+            {{ form_widget(form.TypeCouverture, {'attr': {'class': 'form-control'}}) }}
+            {% if form.TypeCouverture.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.TypeCouverture) }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="dateDebut">Date de début</label>
+            {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+            {% if form.dateDebut.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.dateDebut) }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="dateFin">Date de fin</label>
+            {{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+            {% if form.dateFin.vars.errors|length > 0 %}
+                <div class="form-error">
+                    {{ form_errors(form.dateFin) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>enregistrer
+            </button>
+            <a href="{{ path('assurance_list') }}" class="btn btn-secondary">
+                <i class="fas fa-times me-2"></i>annuler
+            </a>
+        </div>
+    {{ form_end(form) }}
+</div>
+
+<div id="confirmation-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5>Confirmation</h5>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir ajouter cette assurance ?</p>
+        </div>
+        <div class="modal-footer">
+            <button id="confirm-yes" class="btn btn-primary">Oui</button>
+            <button id="confirm-no" class="btn btn-secondary">Non</button>
+        </div>
+    </div>
+</div>
+
+<div id="phone-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5>Numéro de Téléphone</h5>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Veuillez entrer votre numéro de téléphone :</p>
+            <input type="text" id="phone-number" class="form-control" placeholder="Numéro de téléphone">
+        </div>
+        <div class="modal-footer">
+            <button id="send-sms" class="btn btn-primary">Envoyer</button>
+        </div>
+    </div>
+</div>
+
+<div id="sms-status-popup" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5>Statut du SMS</h5>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p id="sms-status-message"></p>
+        </div>
+        <div class="modal-footer">
+            <button id="close-sms-status" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const confirmationModal = document.getElementById('confirmation-modal');
+    const phoneModal = document.getElementById('phone-modal');
+    const smsStatusPopup = document.getElementById('sms-status-popup');
+    const smsStatusMessage = document.getElementById('sms-status-message');
+    const closeSmsStatus = document.getElementById('close-sms-status');
+    const confirmYes = document.getElementById('confirm-yes');
+    const confirmNo = document.getElementById('confirm-no');
+    const sendSms = document.getElementById('send-sms');
+    const closeButtons = document.querySelectorAll('.close');
+
+    function showModal(modal) {
+        modal.style.display = 'block';
+    }
+
+    function hideModal(modal) {
+        modal.style.display = 'none';
+    }
+
+    function showSmsStatus(message) {
+        smsStatusMessage.textContent = message;
+        showModal(smsStatusPopup);
+    }
+
+    // Handle form submission
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        showModal(confirmationModal);
+    });
+
+    // Handle confirmation
+    confirmYes.addEventListener('click', function() {
+        hideModal(confirmationModal);
+        showModal(phoneModal);
+    });
+
+    confirmNo.addEventListener('click', function() {
+        hideModal(confirmationModal);
+    });
+
+    // Handle SMS sending
+    sendSms.addEventListener('click', function() {
+        const phoneNumber = document.getElementById('phone-number').value;
+        
+        // Basic phone number validation
+        if (phoneNumber) {
+            // Remove spaces and special characters for validation
+            const cleanedNumber = phoneNumber.replace(/[^\d+]/g, '');
+            
+            // Check if the number has at least 10 digits (international format)
+            if (cleanedNumber.length < 10) {
+                alert('Veuillez entrer un numéro de téléphone valide avec au moins 10 chiffres.');
+                return;
+            }
+            
+            hideModal(phoneModal);
+            showSmsStatus('Envoi du SMS en cours...');
+            
+            // Add the phone number as a hidden input
+            const phoneInput = document.createElement('input');
+            phoneInput.type = 'hidden';
+            phoneInput.name = 'phone_number';
+            phoneInput.value = phoneNumber;
+            form.appendChild(phoneInput);
+
+            // Add the confirmation as a hidden input
+            const confirmationInput = document.createElement('input');
+            confirmationInput.type = 'hidden';
+            confirmationInput.name = 'confirmation';
+            confirmationInput.value = 'yes';
+            form.appendChild(confirmationInput);
+
+            // Submit the form
+            form.submit();
+        } else {
+            alert('Veuillez entrer un numéro de téléphone valide.');
+        }
+    });
+
+    // Close modals when clicking the close button
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            hideModal(modal);
+        });
+    });
+
+    // Close SMS status popup
+    closeSmsStatus.addEventListener('click', function() {
+        hideModal(smsStatusPopup);
+    });
+});
+</script>
+{% endblock %}

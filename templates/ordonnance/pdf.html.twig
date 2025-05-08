@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ordonnance Médicale</title>
+    <style>
+        body {
+            font-family: "Georgia", serif;
+            font-size: 13px;
+            color: #222;
+            margin: 40px;
+            background: url('https://th.bing.com/th/id/R.d725ae45589e82fbe4fce41414994ad4?rik=KwkggR5ijojduA&riu=http%3a%2f%2ftous-logos.com%2fwp-content%2fuploads%2f2018%2f05%2fLogo-Pharmacie.png&ehk=5mq%2bmnzuRO1mO0lH%2boXsi%2fHTr8Mi5Of%2bRIC6ReGYmAE%3d&risl=&pid=ImgRaw&r=0') center center no-repeat;
+            background-size: 400px;
+            background-attachment: fixed;
+        }
+
+        .container {
+            border: 2px solid #0a3d62;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            position: relative;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cabinet-info {
+            color: #0a3d62;
+            line-height: 1.5;
+            text-align: right;
+            margin-top: -40px; /* Added to move the cabinet info up slightly */
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .certificate-logo {
+            width: 160px;
+            height: auto;
+        }
+
+        .date-text {
+            font-size: 13px;
+            color: #444;
+            text-align: left;
+            margin-top: -30px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 22px;
+            margin: 30px 0;
+            font-weight: bold;
+            text-decoration: underline;
+            color: #1e3799;
+        }
+
+        .doctor-patient {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .doctor-info, .patient-info {
+            width: 48%;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #1e3799;
+            padding-bottom: 5px;
+            color: #1e3799;
+        }
+
+        table.prescription-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table.prescription-table th,
+        table.prescription-table td {
+            border: 1px solid #888;
+            padding: 8px;
+            font-size: 13px;
+        }
+
+        .signature-section {
+            margin-top: 50px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .signature-box {
+            width: 40%;
+            height: 100px;
+            border: 1px solid #444;
+            padding: 10px;
+            position: relative;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .signature-title {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-weight: bold;
+            color: #0a3d62;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            text-align: center;
+            color: #999;
+            border-top: 1px dashed #aaa;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-bar">
+        <div class="logo-container">
+            <img src="{{ absolute_url(asset('uploads/photos/logo.jpeg')) }}" class="certificate-logo" alt="Logo">
+        </div>
+        <div class="cabinet-info">
+            <strong>Cabinet Médical Dr. {{ ordonnance.medecin.utilisateur.nom }}</strong><br>
+            Spécialité : {{ ordonnance.medecin.specialite }}<br>
+            12 Rue des Médecins, Tunis<br>
+            Tél : (+216) 71 123 456<br>
+            Email : contact@cabinet.tn
+        </div>
+    </div>
+
+    <div class="date-text">
+        Tunis, le <strong>{{ ordonnance.datePrescription|date('d/m/Y') }}</strong>
+    </div>
+
+    <div class="title">
+        ORDONNANCE MÉDICALE
+    </div>
+
+    <div class="doctor-patient">
+        <div class="doctor-info">
+            <h2>Médecin</h2>
+            <p><strong>Dr. {{ ordonnance.medecin.utilisateur.nom }}</strong><br>Spécialité : {{ ordonnance.medecin.specialite }}</p>
+        </div>
+
+        <div class="patient-info">
+            <h2>Patient</h2>
+            <p><strong>{{ ordonnance.patient.nom }}</strong></p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Prescription</h2>
+        <table class="prescription-table">
+            <thead>
+                <tr>
+                    <th>Médicament</th>
+                    <th>Quantité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medicament in ordonnance.medicaments %}
+                    {% set parts = medicament|split(':') %}
+                    <tr>
+                        <td>{{ parts[0] }}</td>
+                        <td>{{ parts[1] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Instructions</h2>
+        <p>{{ ordonnance.instructions }}</p>
+    </div>
+
+    <div class="signature-section">
+        <div class="signature-box">
+            <span class="signature-title">Signature du Médecin</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        Merci de respecter la posologie. Contactez votre médecin en cas d'effet secondaire.
+    </div>
+</div>
+
+</body>
+</html>

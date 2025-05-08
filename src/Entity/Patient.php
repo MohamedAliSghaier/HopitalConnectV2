@@ -34,7 +34,7 @@ class Patient
     #[ORM\OneToMany(mappedBy: "patient_id", targetEntity: Avis::class)]
     private Collection $aviss;
 
-    #[ORM\OneToMany(mappedBy: "PatientId", targetEntity: Rendezvous::class)]
+    #[ORM\OneToMany(mappedBy: "patient", targetEntity: Rendezvous::class)]
     private Collection $rendezvouss;
 
     public function __construct()
@@ -229,5 +229,10 @@ class Patient
         }
 
         return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->utilisateur ? $this->utilisateur->getNom() : null;
     }
 }

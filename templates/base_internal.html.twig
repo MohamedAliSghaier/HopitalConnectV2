@@ -57,8 +57,33 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
+                    <a href="{{ path('admin_AvisEtReclamation') }}" class="nav-link">
+                        <i class="fas fa-users me-2"></i>Liste des Avis Et Reclamations
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ path('adminrendezvouslist') }}" class="nav-link">
+                        <i class="fas fa-users me-2"></i>Liste des Rendez Vous
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ path('adminanalyse') }}" class="nav-link">
+                        <i class="fas fa-users me-2"></i>Liste des Analyse
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
                     <a href="{{ path('admin_statistiques') }}" class="nav-link">
                         <i class="fas fa-chart-bar me-2"></i>Statistiques
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ path('admin_medicaments_stats') }}" class="nav-link">
+                        <i class="fas fa-chart-bar me-2"></i> Statistiques Medicamments
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ path('admin_medicaments') }}" class="nav-link">
+                        <i class="fas fa-chart-bar me-2"></i>medicaments
                     </a>
                 </li>
             {% endif %}
@@ -66,19 +91,93 @@
                 <!-- Boutons pour le médecin -->
                 {% if 'ROLE_MEDECIN' in app.user.roles %}
                     <li class="nav-item mb-2">
-                        <a href="{{ path('medecin_dashboard') }}" class="nav-link">
-                            <i class="fas fa-stethoscope me-2"></i>Tableau de Bord Médecin
+                        <a href="{{ path('rendezvous_listmedecin') }}" class="nav-link">
+                            <i class="fas fa-stethoscope me-2"></i>Rendez Vous
                         </a>
                     </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('medecin_AvisEtReclamation') }}" class="nav-link">
+                            <i class="fas fa-stethoscope me-2"></i>Avis Et Reclamation
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('ordonnance_add') }}" class="nav-link">
+                            <i class="fas fa-stethoscope me-2"></i>Ajout Ordonnance
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('ordonnance_list') }}" class="nav-link">
+                            <i class="fas fa-stethoscope me-2"></i>List Ordonnance
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('analyse_add') }}" class="nav-link">
+                            <i class="fas fa-stethoscope me-2"></i>Ajout Anlayse 
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('analyse_list') }}" class="nav-link">
+                            <i class="fas fa-stethoscope me-2"></i>list  Anlayse 
+                        </a>
+                    </li>
+
                 {% endif %}
     
                 <!-- Boutons pour le patient -->
                 {% if 'ROLE_PATIENT' in app.user.roles %}
                     <li class="nav-item mb-2">
-                        <a href="{{ path('patient_dashboard') }}" class="nav-link">
-                            <i class="fas fa-user me-2"></i>Tableau de Bord Patient
+                        <a href="{{ path('rendezvous_listpatient') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>RendezVous
                         </a>
                     </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('patient_AvisEtReclamation') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>Ajout AvisEtReclamation
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('ordonnance_my') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>Mes Ordonnances
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('dossiermedicale_add') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>Ajout Dossier Medicale
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('dossiermedicale_list') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>Mon Dossier Medicale
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('assurance_add') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>Ajout Assurance
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('assurance_list') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>Mon Assurance
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('patient_analyses') }}" class="nav-link">
+                            <i class="fas fa-user me-2"></i>list analyse
+                        </a>
+                    </li>
+
+                    
                 {% endif %}
     
                 <!-- Boutons pour le pharmacien -->
@@ -86,6 +185,16 @@
                     <li class="nav-item mb-2">
                         <a href="{{ path('pharmacien_dashboard') }}" class="nav-link">
                             <i class="fas fa-pills me-2"></i>Tableau de Bord Pharmacien
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('pharmacien_ordonnances') }}" class="nav-link">
+                            <i class="fas fa-pills me-2"></i>Liste Ordonnance
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="{{ path('pharmacien_medicaments_list') }}" class="nav-link">
+                            <i class="fas fa-pills me-2"></i>Gerer Stock
                         </a>
                     </li>
                 {% endif %}

@@ -11,6 +11,7 @@ parameters:
 
 services:
     
+    
     # Default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -39,5 +40,18 @@ services:
     App\Service\FaceRecognitionService:
         arguments:
             $knownFacesDir: '%known_faces_directory%'  # Add correct directory for known faces
+
+
+    App\Service\TwilioService:
+        arguments:
+            $sid: '%env(TWILIO_SID)%'
+            $token: '%env(TWILIO_TOKEN)%'
+            $from: '%env(TWILIO_FROM)%'
+
+    # explicitly configure the QrCodeService
+    App\Service\QrCodeService:
+        public: true
+        arguments:
+            $params: '@parameter_bag'
 
   

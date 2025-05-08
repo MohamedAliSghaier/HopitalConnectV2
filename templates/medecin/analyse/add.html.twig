@@ -1,0 +1,57 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Add Analysis{% endblock %}
+
+{% block body %}
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h2 class="wow fadeInUp" data-wow-delay=".4s">
+                        <i class="lni lni-notepad"></i> Add New Analysis
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card wow fadeInUp" data-wow-delay=".6s">
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'class': 'medical-form'}}) }}
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="form-group">
+                                {{ form_label(form.date) }}
+                                {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                                <small class="form-text text-muted">Select analysis date</small>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="form-group">
+                                {{ form_label(form.type) }}
+                                {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                {{ form_label(form.RendezVous) }}
+                                {{ form_widget(form.RendezVous, {'attr': {'class': 'form-control'}}) }}
+                                <small class="form-text text-muted">Select a patient based on their rendezvous</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="lni lni-save"></i> Create
+                        </button>
+                        <a href="{{ path('analyse_list') }}" class="btn btn-secondary">
+                            <i class="lni lni-close"></i> Cancel
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

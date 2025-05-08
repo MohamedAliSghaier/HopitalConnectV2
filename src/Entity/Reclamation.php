@@ -3,33 +3,46 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Validator\NoBadWords;
+
 
 use App\Entity\Medecin;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity]
 class Reclamation
 {
 
     #[ORM\Id]
+    #[ORM\GeneratedValue]  // This allows Doctrine to automatically generate the ID.
     #[ORM\Column(type: "integer")]
     private int $id;
 
         #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "reclamations")]
     #[ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Utilisateur $utilisateur_id;
+    private Utilisateur $utilisateur;
 
         #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: "reclamations")]
     #[ORM\JoinColumn(name: 'medecin_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Medecin $medecin_id;
+    private Medecin $medecin;
 
+
+    #[NoBadWords]
+    #[Assert\NotBlank(message: "Sujet requis")]
+    #[Assert\Length(min: 5, minMessage: "Sujet trop court")]
     #[ORM\Column(type: "string", length: 255)]
     private string $sujet;
 
+
+    #[NoBadWords]
+    #[Assert\NotBlank(message: "Description requise")]
+    #[Assert\Length(min: 10, minMessage: "Description trop courte")]
     #[ORM\Column(type: "text")]
     private string $description;
 
     #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $date_reclamation;
+    private \DateTimeInterface $dateReclamation;
 
     public function getId()
     {
@@ -41,24 +54,24 @@ class Reclamation
         $this->id = $value;
     }
 
-    public function getUtilisateur_id()
+    public function getUtilisateur()
     {
-        return $this->utilisateur_id;
+        return $this->utilisateur;
     }
 
-    public function setUtilisateur_id($value)
+    public function setUtilisateur($value)
     {
-        $this->utilisateur_id = $value;
+        $this->utilisateur = $value;
     }
 
-    public function getMedecin_id()
+    public function getMedecin()
     {
-        return $this->medecin_id;
+        return $this->medecin;
     }
 
-    public function setMedecin_id($value)
+    public function setMedecin($value)
     {
-        $this->medecin_id = $value;
+        $this->medecin= $value;
     }
 
     public function getSujet()
@@ -81,13 +94,13 @@ class Reclamation
         $this->description = $value;
     }
 
-    public function getDate_reclamation()
+    public function getDateReclamation ()
     {
-        return $this->date_reclamation;
+        return $this->dateReclamation;
     }
 
-    public function setDate_reclamation($value)
+    public function setDateReclamation($value)
     {
-        $this->date_reclamation = $value;
+        $this->dateReclamation = $value;
     }
 }

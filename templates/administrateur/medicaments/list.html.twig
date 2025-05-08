@@ -1,0 +1,96 @@
+{# templates/administrateur/medicaments/list.html.twig #}
+
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}Liste des Médicaments{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4 mb-4">Liste des Médicaments</h1>
+
+    {# Tableau des médicaments #}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="sortable" data-sort="nom">
+                                Nom <i class="fas fa-sort"></i>
+                            </th>
+                            <th scope="col" class="sortable" data-sort="stock">
+                                Quantité en stock <i class="fas fa-sort"></i>
+                            </th>
+                            <th scope="col">Pharmacien</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medicament in medicaments %}
+                            <tr>
+                                <td>{{ medicament.nom }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1" style="height: 20px;">
+                                            {% set percentage = (medicament.stock / 100) * 100 %}
+                                            <div class="progress-bar {% if percentage < 30 %}bg-danger{% elseif percentage < 70 %}bg-warning{% else %}bg-success{% endif %}" 
+                                                 role="progressbar" 
+                                                 style="width: {{ percentage }}%"
+                                                 aria-valuenow="{{ medicament.stock }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                {{ medicament.stock }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if medicament.pharmacien %}
+                                        <span class="badge bg-info">
+                                            {{ medicament.pharmacien.utilisateur.nom }} {{ medicament.pharmacien.utilisateur.prenom }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Non attribué</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4">
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fas fa-info-circle"></i> Aucun médicament trouvé.
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tri des colonnes
+    document.querySelectorAll('.sortable').forEach(header => {
+        header.addEventListener('click', function() {
+            const sort = this.dataset.sort;
+            const currentUrl = new URL(window.location.href);
+            const currentSort = currentUrl.searchParams.get('sort');
+            const currentOrder = currentUrl.searchParams.get('order');
+            
+            let newOrder = 'asc';
+            if (currentSort === sort && currentOrder === 'asc') {
+                newOrder = 'desc';
+            }
+            
+            currentUrl.searchParams.set('sort', sort);
+            currentUrl.searchParams.set('order', newOrder);
+            window.location.href = currentUrl.toString();
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -3,90 +3,155 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use App\Repository\AssuranceRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Patient;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: AssuranceRepository::class)]
 class Assurance
 {
-
     #[ORM\Id]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
-    private int $id_assurance;
+    private ?int $id = null;
 
-        #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "assurances")]
-    #[ORM\JoinColumn(name: 'Id_PatientAs', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Patient $Id_PatientAs;
+    #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "assurances")]
+    #[ORM\JoinColumn(name: "patient_id", referencedColumnName: "id", onDelete: "CASCADE")]
+    #[Assert\NotNull(message: "Patient is required")]
+    private ?Patient $patient = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $nom;
+    #[ORM\Column(name: "date_debut", type: "date")]
+    #[Assert\NotNull(message: "La date de début est obligatoire.")]
+    #[Assert\LessThanOrEqual(
+        propertyPath: "dateFin",
+        message: "La date de début doit être antérieure ou égale à la date de fin."
+    )]
+    private \DateTimeInterface $dateDebut;
 
-    #[ORM\Column(type: "string")]
-    private string $type;
+    #[ORM\Column(name: "date_fin", type: "date")]
+    #[Assert\NotNull(message: "La date de fin est obligatoire.")]
+    #[Assert\GreaterThanOrEqual(
+        propertyPath: "dateDebut",
+        message: "La date de fin doit être postérieure ou égale à la date de début."
+    )]
+    private \DateTimeInterface $dateFin;
 
-    #[ORM\Column(type: "date")]
-    private \DateTimeInterface $date_debut;
+    #[ORM\Column(name: "nom_assureur", type: "string", length: 255)]
+    #[Assert\NotBlank(message: "Insurer name cannot be blank")]
+    private string $NomAssureur;
 
-    #[ORM\Column(type: "date")]
-    private \DateTimeInterface $date_fin;
+    #[ORM\Column(name: "type_assureur", type: "string", length: 255)]
+    #[Assert\NotBlank(message: "Insurer type cannot be blank")]
+    private string $TypeAssureur;
 
-    public function getId_assurance()
+    #[ORM\Column(name: "numero_police", type: "integer")]
+    #[Assert\NotBlank(message: "Le numéro de police est obligatoire.")]
+    #[Assert\Length(
+        min: 8,
+        max: 8,
+        exactMessage: "Le numéro de police doit contenir exactement {{ limit }} chiffres."
+    )]
+    #[Assert\Positive(message: "Le numéro de police doit être un nombre positif.")]
+    private int $NumeroPolice;
+
+    #[ORM\Column(name: "nom_titulaire", type: "string", length: 255)]
+    #[Assert\NotBlank(message: "Policyholder name cannot be blank")]
+    private string $NomTitulaire;
+
+    #[ORM\Column(name: "type_couverture", type: "string", length: 255)]
+    #[Assert\NotBlank(message: "Coverage type cannot be blank")]
+    private string $TypeCouverture;
+
+    public function getId(): ?int
     {
-        return $this->id_assurance;
+        return $this->id;
     }
 
-    public function setId_assurance($value)
+    public function getPatient(): ?Patient
     {
-        $this->id_assurance = $value;
+        return $this->patient; 
+    }
+    
+    public function setPatient(?Patient $patient): self
+    {
+        $this->patient = $patient; 
+        return $this;
     }
 
-    public function getId_PatientAs()
+    public function getDateDebut(): \DateTimeInterface
     {
-        return $this->Id_PatientAs;
+        return $this->dateDebut;
     }
 
-    public function setId_PatientAs($value)
+    public function setDateDebut(\DateTimeInterface $dateDebut): self
     {
-        $this->Id_PatientAs = $value;
+        $this->dateDebut = $dateDebut;
+        return $this;
     }
 
-    public function getNom()
+    public function getDateFin(): \DateTimeInterface
     {
-        return $this->nom;
+        return $this->dateFin;
     }
 
-    public function setNom($value)
+    public function setDateFin(\DateTimeInterface $dateFin): self
     {
-        $this->nom = $value;
+        $this->dateFin = $dateFin;
+        return $this;
     }
 
-    public function getType()
+    public function getNomAssureur(): string
     {
-        return $this->type;
+        return $this->NomAssureur;
     }
 
-    public function setType($value)
+    public function setNomAssureur(string $NomAssureur): self
     {
-        $this->type = $value;
+        $this->NomAssureur = $NomAssureur;
+        return $this;
     }
 
-    public function getDate_debut()
+    public function getTypeAssureur(): string
     {
-        return $this->date_debut;
+        return $this->TypeAssureur;
     }
 
-    public function setDate_debut($value)
+    public function setTypeAssureur(string $TypeAssureur): self
     {
-        $this->date_debut = $value;
+        $this->TypeAssureur = $TypeAssureur;
+        return $this;
     }
 
-    public function getDate_fin()
+    public function getNumeroPolice(): int
     {
-        return $this->date_fin;
+        return $this->NumeroPolice;
     }
 
-    public function setDate_fin($value)
+    public function setNumeroPolice(int $NumeroPolice): self
     {
-        $this->date_fin = $value;
+        $this->NumeroPolice = $NumeroPolice;
+        return $this;
+    }
+
+    public function getNomTitulaire(): string
+    {
+        return $this->NomTitulaire;
+    }
+
+    public function setNomTitulaire(string $NomTitulaire): self
+    {
+        $this->NomTitulaire = $NomTitulaire;
+        return $this;
+    }
+
+    public function getTypeCouverture(): string
+    {
+        return $this->TypeCouverture;
+    }
+
+    public function setTypeCouverture(string $TypeCouverture): self
+    {
+        $this->TypeCouverture = $TypeCouverture;
+        return $this;
     }
 }

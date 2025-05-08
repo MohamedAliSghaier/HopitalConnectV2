@@ -1,0 +1,37 @@
+{% extends 'base_internal.html.twig' %}
+
+{% block title %}{{ app.request.attributes.get('_route') == 'analyse_add' ? 'Add' : 'Edit' }} Analysis{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">{{ app.request.attributes.get('_route') == 'analyse_add' ? 'Add New' : 'Edit' }} Analysis</h2>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.date) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.type) }}
+                    </div>
+                    <div class="col-12">
+                        {{ form_row(form.RendezVous) }}
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> {{ app.request.attributes.get('_route') == 'analyse_add' ? 'Create' : 'Update' }}
+                    </button>
+                    <a href="{{ path('analyse_list') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

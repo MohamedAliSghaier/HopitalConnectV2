@@ -11,9 +11,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Medecin
 {
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: "medecins")]
-    #[ORM\JoinColumn(name: 'id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Utilisateur $id;
+    #[ORM\OneToOne(targetEntity: Utilisateur::class, inversedBy: "medecin")]
+#[ORM\JoinColumn(name: 'id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+private Utilisateur $utilisateur;
 
     #[ORM\Column(type: "string", length: 100)]
     private string $specialite;
@@ -29,15 +29,14 @@ class Medecin
         $this->reclamations = new ArrayCollection();
     }
 
-    public function getId(): Utilisateur
+    public function getUtilisateur()
     {
-        return $this->id;
+        return $this->utilisateur;
     }
 
-    public function setId(Utilisateur $value): self
+    public function setUtilisateur($value)
     {
-        $this->id = $value;
-        return $this;
+        $this->utilisateur = $value;
     }
 
     public function getSpecialite(): string
@@ -61,22 +60,7 @@ class Medecin
         $this->num_rdv_max = $value;
         return $this;
     }
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->id;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): self
-    {
-        $this->id = $utilisateur;
-
-        // Synchroniser le côté inverse de la relation
-        if ($utilisateur !== null && $utilisateur->getMedecin() !== $this) {
-            $utilisateur->setMedecin($this);
-        }
-
-        return $this;
-    }
+    
 
     // ----- À partir d'ici, inchangé comme demandé -----
 

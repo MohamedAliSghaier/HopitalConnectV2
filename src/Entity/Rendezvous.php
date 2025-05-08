@@ -13,6 +13,7 @@ class Rendezvous
 {
 
     #[ORM\Id]
+    #[ORM\GeneratedValue]  // This allows Doctrine to automatically generate the ID.
     #[ORM\Column(type: "integer")]
     private int $id;
 
@@ -22,19 +23,19 @@ class Rendezvous
     
         #[ORM\ManyToOne(targetEntity: Patient::class, inversedBy: "rendezvouss")]
     #[ORM\JoinColumn(name: 'PatientId', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Patient $PatientId;
+    private Patient $patient;
 
         #[ORM\ManyToOne(targetEntity: Medecin::class, inversedBy: "rendezvouss")]
     #[ORM\JoinColumn(name: 'medecinId', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    private Medecin $medecinId;
+    private Medecin $medecin;
 
-    #[ORM\Column(type: "datetime")]
-    private \DateTimeInterface $start_time;
+    #[ORM\Column(name: "start_time", type: "datetime")]
+    private \DateTimeInterface $startTime;
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $end_time;
-    #[ORM\Column(type: "integer")]
-    private int $type_consultation_id;
+    #[ORM\Column(name: "type_consultation_id", type: "integer")]
+     private int $typeConsultationId;
 
     public function getId()
     {
@@ -55,45 +56,47 @@ class Rendezvous
     {
         $this->date = $value;
     }
-
-    public function getType_consultation_id()
+    public function getTypeConsultationId(): int
     {
-        return $this->type_consultation_id;
+        return $this->typeConsultationId;
+    }
+    
+    public function setTypeConsultationId(int $typeConsultationId): self
+    {
+        $this->typeConsultationId = $typeConsultationId;
+        return $this;
     }
 
-    public function setType_consultation_id($value)
+   public function getPatient(): ?Patient
+{
+    return $this->patient;  // lowercase 'p'
+}
+
+public function setPatient(?Patient $patient): self
+{
+    $this->patient = $patient;  // lowercase 'p'
+    return $this;
+}
+
+    public function getMedecin()
     {
-        $this->type_consultation_id = $value;
+        return $this->medecin;
     }
 
-    public function getPatientId()
+    public function setMedecin($value)
     {
-        return $this->PatientId;
+        $this->medecin = $value;
     }
 
-    public function setPatientId($value)
+    public function getStartTime(): \DateTimeInterface
     {
-        $this->PatientId = $value;
+        return $this->startTime;
     }
-
-    public function getMedecinId()
+    
+    public function setStartTime(\DateTimeInterface $startTime): self
     {
-        return $this->medecinId;
-    }
-
-    public function setMedecinId($value)
-    {
-        $this->medecinId = $value;
-    }
-
-    public function getStart_time()
-    {
-        return $this->start_time;
-    }
-
-    public function setStart_time($value)
-    {
-        $this->start_time = $value;
+        $this->startTime = $startTime;
+        return $this;
     }
 
     public function getEnd_time()
