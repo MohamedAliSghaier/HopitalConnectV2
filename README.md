@@ -1,4 +1,4 @@
-# 🧩 Projet Symfony - Intégration Réseau
+# 🧩 Projet Symfony
 
 Ce projet est une application web développée avec le framework **Symfony 6**. Il a pour but de gérer les **rendez-vous**, les **réclamations**, les **avis** et les **ordonnances** dans un contexte médical collaboratif.
 
@@ -24,5 +24,5 @@ Ce projet a été réalisé dans un cadre universitaire, en intégrant plusieurs
 
 1. Clonez le repository :
    ```bash
-   git clone https://github.com/<ton-utilisateur>/<nom-du-repo>.git
+   git clone https://github.com/MohamedAliSghaier/HopitalConnectV2.git
    cd <nom-du-repo>
